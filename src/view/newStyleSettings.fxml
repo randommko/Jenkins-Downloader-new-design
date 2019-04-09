@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="255.0" prefWidth="390.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.NewStyleSettingsController">
+   <children>
+      <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="5.0">
+         <children>
+            <VBox prefHeight="205.0" spacing="4.0">
+               <children>
+                  <HBox alignment="CENTER" spacing="41.0">
+                     <children>
+                        <Label prefHeight="25.0" styleClass="text-dark" stylesheets="@../css/myStyle.css" text="Server address:" />
+                        <TextField fx:id="serverAddressTextField" prefWidth="240.0" styleClass="text-field" stylesheets="@../css/myStyle.css">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin></TextField>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" spacing="10.0">
+                     <children>
+                        <Label prefHeight="25.0" styleClass="text-dark" stylesheets="@../css/myStyle.css" text="Download directory:" />
+                        <TextField fx:id="downloadPathTextField" prefHeight="25.0" prefWidth="240.0" styleClass="text-field" stylesheets="@../css/myStyle.css" />
+                     </children>
+                  </HBox>
+                  <Button mnemonicParsing="false" onAction="#setDirectory" prefHeight="25.0" prefWidth="100.0" stylesheets="@../css/myStyle.css" text="Choose..." textAlignment="CENTER">
+                     <VBox.margin>
+                        <Insets left="270.0" />
+                     </VBox.margin></Button>
+                  <Separator prefWidth="200.0" stylesheets="@../css/myStyle.css">
+                     <VBox.margin>
+                        <Insets right="5.0" />
+                     </VBox.margin></Separator>
+                  <CheckBox fx:id="showNotificationsCheckBox" mnemonicParsing="false" styleClass="checkbox" stylesheets="@../css/myStyle.css" text="Show notifications" />
+                  <CheckBox fx:id="showAllJobsCheckBox" mnemonicParsing="false" styleClass="checkbox" stylesheets="@../css/myStyle.css" text="Show all jobs" />
+                  <CheckBox fx:id="autoUpdateCheckBox" mnemonicParsing="false" styleClass="checkbox" stylesheets="@../css/myStyle.css" text="Auto update jobs status in background" />
+               </children>
+               <VBox.margin>
+                  <Insets left="5.0" />
+               </VBox.margin>
+            </VBox>
+            <HBox alignment="CENTER_LEFT" prefHeight="50.0" spacing="15.0" styleClass="hBox" stylesheets="@../css/myStyle.css">
+               <children>
+                  <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveButton" prefHeight="25.0" prefWidth="75.0" stylesheets="@../css/myStyle.css" text="Save" />
+                  <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#exitButton" prefHeight="25.0" prefWidth="75.0" stylesheets="@../css/myStyle.css" text="Cancel" />
+                  <Button mnemonicParsing="false" onAction="#openTagSettings" text="Tag settings" />
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets left="15.0" />
+               </padding></HBox>
+         </children></VBox>
+   </children>
+</AnchorPane>

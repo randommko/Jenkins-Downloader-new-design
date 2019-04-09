@@ -1,0 +1,5 @@
+META-INF/
+out/
+.idea/
+design/
+!Jenkins downloader.jar
