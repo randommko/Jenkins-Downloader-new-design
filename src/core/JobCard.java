@@ -317,7 +317,7 @@ public class JobCard extends Pane
                 writeToLog("Can't create folder for download. Check file path in settings");
                 //TODO: при начале скачивания должем менятся текст статуса приложения? подумать нужно ли это т.к.
                 //при скачивании будет появляется прогресс бар в карточке  джобы
-                //NewMainStyleController.setStatus(NewMainStyleController.ClientStatus._lastStatus);
+                //MainController.setStatus(MainController.ClientStatus._lastStatus);
                 return false;
             }
         }
@@ -368,13 +368,13 @@ public class JobCard extends Pane
                 writeToLog("Start downloading: " + job.getJobName() + " (#" + job.getJobID() + "), " + formattedSize + "Mb");
             }
 
-            //setStatus(NewMainStyleController.ClientStatus.Downloading, job);
+            //setStatus(MainController.ClientStatus.Downloading, job);
 
             job.download(file);
 
             writeToLog("Download complete: " + job.getJobName() + " (#" + job.getJobID() + ")");
             trayMessage("Download complete: " + job.getJobName() + " (#" + job.getJobID() + ")");
-            //setStatus(NewMainStyleController.ClientStatus.Connected);
+            //setStatus(MainController.ClientStatus.Connected);
         };
 
         return download;

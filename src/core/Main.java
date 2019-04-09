@@ -1,6 +1,5 @@
 package core;
 
-import core.AppSettings;
 import javafx.application.Application;
 
 import javafx.application.Platform;
@@ -38,7 +37,7 @@ public class Main extends Application
         try
         {
             stage = primaryStage;
-            Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("view/newMainStyle.fxml"));
+            Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("view/Main.fxml"));
 
             Scene scene = new Scene(root, SCENE_WIDTH, SCENE_HEIGHT);
 

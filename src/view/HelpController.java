@@ -31,7 +31,7 @@ public class HelpController {
     @FXML
     private  void closeButtonClick()
     {
-        Stage mainStage = NewMainStyleController.getHelpStage();
+        Stage mainStage = MainController.getHelpStage();
         mainStage.close();
     }
 

@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 import static java.lang.Thread.sleep;
 
 
-public class NewMainStyleController
+public class MainController
 {
     private static Stage settingsStage, helpStage;
     private static final String settingsImageURL = "image/settings(small).png";
@@ -90,7 +90,7 @@ public class NewMainStyleController
     {
         Window stage = Main.getStage();
         try {
-            Parent settingsRoot = FXMLLoader.load(getClass().getClassLoader().getResource("view/newStyleSettings.fxml"));
+            Parent settingsRoot = FXMLLoader.load(getClass().getClassLoader().getResource("view/Settings.fxml"));
             Scene settingsScene = new Scene(settingsRoot, 390, 250);
 
             settingsStage = new Stage();
@@ -122,7 +122,7 @@ public class NewMainStyleController
     {
         Window stage = Main.getStage();
         try {
-            Parent helpRoot = FXMLLoader.load(getClass().getClassLoader().getResource("view/help.fxml"));
+            Parent helpRoot = FXMLLoader.load(getClass().getClassLoader().getResource("view/Help.fxml"));
             Scene helpScene = new Scene(helpRoot, 800, 400);
 
             helpStage = new Stage();
@@ -190,7 +190,7 @@ public class NewMainStyleController
                         }
                     }
                     catch (Exception e) {
-                        System.out.println("(NewMainStyleController) (endlessUpdateStatusOfJobs) Error on job status updating: " + e);
+                        System.out.println("(MainController) (endlessUpdateStatusOfJobs) Error on job status updating: " + e);
                         if (actualStatus == ClientStatus.Connected)
                             setStatus(ClientStatus.Disconnected);
                     }
@@ -264,7 +264,7 @@ public class NewMainStyleController
 
             allFoundJobs = new JenkinsJobs(jobsForMainForm);    //копируем список
 
-            //System.out.println("(NewMainStyleController) (refreshingAllJobsStatus) AppSettings.isShowAllJobs():" + AppSettings.isShowAllJobs());
+            //System.out.println("(MainController) (refreshingAllJobsStatus) AppSettings.isShowAllJobs():" + AppSettings.isShowAllJobs());
             if (!AppSettings.isShowAllJobs())   //если нужно отображать только скачиваемые джобы то удаляем ненужные элементы
             {
                 Iterator iterator = jobsForMainForm.getListOfJobs().iterator();
@@ -281,12 +281,12 @@ public class NewMainStyleController
         catch (IllegalArgumentException err)
         {
             writeToLog("Incorrect server address");
-            System.out.println("(NewMainStyleController) (refreshingAllJobsStatus) Incorrect server address: " + err);
+            System.out.println("(MainController) (refreshingAllJobsStatus) Incorrect server address: " + err);
             setStatus(ClientStatus.Disconnected);
         }
         catch (Exception error)
         {
-            System.out.println("(NewMainStyleController) (refreshingAllJobsStatus) Unknown error: " + error);
+            System.out.println("(MainController) (refreshingAllJobsStatus) Unknown error: " + error);
             setStatus(ClientStatus.Disconnected);
         }
     }
@@ -329,14 +329,14 @@ public class NewMainStyleController
         Platform.runLater(
                 () ->
                 {
-                    System.out.println("(NewMainStyleController) (writeToLog) Log msg:  " + text);
+                    System.out.println("(MainController) (writeToLog) Log msg:  " + text);
                     Date date = new Date();
                     SimpleDateFormat formatForDateNow = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
 
 //                    try {
 //                        logTextArea.setText(formatForDateNow.format(date) + ": " + text + "\n" + logTextArea.getText());
 //                    } catch (Exception e) {
-//                        System.out.println("(NewMainStyleController) Error on write to log: " + e);
+//                        System.out.println("(MainController) Error on write to log: " + e);
 //                    }
                 }
         );
@@ -397,7 +397,7 @@ public class NewMainStyleController
         }
         catch (Exception e)
         {
-            System.out.println("(NewMainStyleController) Error on change status: " + e);
+            System.out.println("(MainController) Error on change status: " + e);
         }
 
     }
@@ -457,7 +457,7 @@ public class NewMainStyleController
         }
         catch (Exception e)
         {
-            System.out.println("(NewMainStyleController) Error on change status: " + e);
+            System.out.println("(MainController) Error on change status: " + e);
         }
 
     }
@@ -473,7 +473,7 @@ public class NewMainStyleController
             );
         }
         catch (Exception e) {
-            System.out.println("(NewMainStyleController) Label error: " + e);
+            System.out.println("(MainController) Label error: " + e);
         }
     }
 
@@ -488,7 +488,7 @@ public class NewMainStyleController
                     }
                     catch (Exception e)
                     {
-                        System.out.println("(NewMainStyleController) Can't display tray message: " + e);
+                        System.out.println("(MainController) Can't display tray message: " + e);
                     }
                 }
         );
@@ -502,7 +502,7 @@ public class NewMainStyleController
         }
         catch (Exception err)
         {
-            System.out.println("(NewMainStyleController) (sleep) Can't call sleep method: " + err);
+            System.out.println("(MainController) (sleep) Can't call sleep method: " + err);
         }
     }
 

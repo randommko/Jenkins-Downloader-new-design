@@ -16,9 +16,9 @@ import javafx.stage.Stage;
 import java.io.File;
 
 import static core.AppSettings.loadConfigFile;
-import static view.NewMainStyleController.getSettingsStage;
+import static view.MainController.getSettingsStage;
 
-public class NewStyleSettingsController {
+public class SettingsController {
 
     private Main main;
 
@@ -60,7 +60,7 @@ public class NewStyleSettingsController {
             downloadPathTextField.setText(selectedDirectory.getAbsolutePath());
         }
         catch (NullPointerException e) {
-            System.out.println("(NewStyleSettingsController) No directory: " + e);
+            System.out.println("(SettingsController) No directory: " + e);
         }
     }
 
@@ -111,7 +111,7 @@ public class NewStyleSettingsController {
         //TODO: не котрывает окно настроек тэгов
         try {
 
-            Parent settingsRoot = FXMLLoader.load(getClass().getClassLoader().getResource("view/tagSettings.fxml"));
+            Parent settingsRoot = FXMLLoader.load(getClass().getClassLoader().getResource("view/TagSettings.fxml"));
             Scene settingsScene = new Scene(settingsRoot, TAG_SCENE_WIDTH, TAG_SCENE_HEIGHT);
 
             tagSettingsStage = new Stage();

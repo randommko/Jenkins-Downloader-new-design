@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 
-import static view.NewStyleSettingsController.getTagSettingsStage;
+import static view.SettingsController.getTagSettingsStage;
 
 public class TagSettingsController
 {
@@ -38,7 +38,7 @@ public class TagSettingsController
         list = new ArrayList<>();
 
 //        main = new Main();
-        NewMainStyleController mainController = new NewMainStyleController();
+        MainController mainController = new MainController();
 
         this.jobs = mainController.getListOfJobs();
 
