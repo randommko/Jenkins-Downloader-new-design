@@ -53,7 +53,7 @@
                <children>
                   <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" layoutX="10.0" layoutY="35.0" styleClass="scrollPane" stylesheets="@../css/myStyle.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="5.0">
                      <content>
-                        <FlowPane fx:id="botFlowPane" alignment="CENTER" hgap="10.0" styleClass="flowPane" stylesheets="@../css/myStyle.css" vgap="10.0" />
+                        <FlowPane fx:id="botFlowPane" hgap="10.0" styleClass="flowPane" stylesheets="@../css/myStyle.css" vgap="10.0" />
                      </content>
                   </ScrollPane>
                </children></AnchorPane>

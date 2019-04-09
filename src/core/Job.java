@@ -15,6 +15,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
+import view.MainController;
 
 import java.awt.*;
 import java.io.File;
@@ -49,6 +50,7 @@ public class Job extends Pane {
     private Label iconJobStatus;
     private Label jobStatusLabel;
     private String roundingForStatusIcon;
+    private Pane overlayPane;
 
     private final String bgColor = "#E3F2FD";
     private final String mainColor = "#0D47A1";
@@ -141,6 +143,9 @@ public class Job extends Pane {
         progressBar = new ProgressBar();
         errorText = new Label();
 
+        //TODO: сделать overlayPane прозрачной
+        overlayPane = new Pane();
+
         rootVBox.setSpacing(2); //отступы между элментами карточки
         rootVBox.setAlignment(Pos.CENTER);
 
@@ -151,7 +156,7 @@ public class Job extends Pane {
         configDownloadPane();
 
 
-        rootVBox.getChildren().addAll(jobNameLabel, stateHBox, dateLabel, separator_1, descriptionText, separator_2, downloadButton);
+        rootVBox.getChildren().addAll(jobNameLabel, stateHBox, dateLabel, separator_1, descriptionText, separator_2, downloadPane, overlayPane);
         this.getChildren().addAll(rootVBox);
     }
 
@@ -290,7 +295,7 @@ public class Job extends Pane {
                 ";");
 
         downloadButton.setOnMouseClicked((event)->{
-            startJobDownload(this);
+            startJobDownload();
         });
 
         downloadButton.setOnMousePressed((event -> {
@@ -330,24 +335,24 @@ public class Job extends Pane {
         //TODO: не отображаются прогресс бар и текст
         progressBar.setVisible(false);
         errorText.setVisible(false);
-//        progressBar.setStyle("-fx-padding: 14px;" +
-//                "-fx-background-color: " + darkTextColor + ";" +
-//                "-fx-accent: " + lightTextColor + ";");
-//        progressBar.getStyleClass().add("-fx-padding: 14px;" +
-//                "-fx-background-color:"  + darkTextColor + ";");
-//        progressBar.setProgress(0.5);
+        progressBar.setStyle("-fx-padding: 14px;" +
+                "-fx-background-color: " + darkTextColor + ";" +
+                "-fx-accent: " + lightTextColor + ";");
+        progressBar.getStyleClass().add("-fx-padding: 14px;" +
+                "-fx-background-color:"  + darkTextColor + ";");
+        progressBar.setProgress(0.5);
 
         downloadPane.setVisible(true);
-        //downloadPane.setAlignment(Pos.CENTER);
+//        downloadPane.setAlignment(Pos.CENTER);
         downloadPane.getChildren().addAll(downloadButton, progressBar, errorText);
     }
 
 
 
 
-    private boolean startJobDownload(Job job) {
+    private boolean startJobDownload() {
         String path = AppSettings.getSavePath();
-        File folder = new File(path + "\\" + job.getJobName() + "\\");
+        File folder = new File(path + "\\" + jobName + "\\");
 
         if (!folder.exists())
         {
@@ -363,11 +368,11 @@ public class Job extends Pane {
         //double size = job.getSize();
 
         progressBar.setProgress(0);
-        File file = new File(folder, job.getJobID() + ".zip");
+        File file = new File(folder, jobID + ".zip");
 
         if (!file.exists())
         {
-            Thread downloadThread = new Thread(download(job, size, file));
+            Thread downloadThread = new Thread(download(file));
             downloadThread.start();
 
             if(size != -1.0)
@@ -392,7 +397,7 @@ public class Job extends Pane {
             }
         }
         else {
-            writeToLog(job.getJobName() + " (#" + job.getJobID() + ") already exists");
+            writeToLog(jobName + " (#" + jobID + ") already exists");
         }
         return true;
     }
@@ -437,7 +442,6 @@ public class Job extends Pane {
         errorText.setVisible(true);
         errorText.setText(text);
     }
-
 
     public String getJobName() {
         return jobName;
@@ -506,23 +510,18 @@ public class Job extends Pane {
 
 
 
-    private Runnable download (Job job, double sizeOfLastBuild, File file)
+    private Runnable download (File file)
     {
          Runnable download = () -> {
-            if (sizeOfLastBuild == -1.0)
-                writeToLog("Start downloading: " + job.getJobName() + " (#" + job.getJobID() + ")");
+            if (size == -1.0)
+                writeToLog("Start downloading: " + jobName + " (#" + jobID + ")");
             else {
-                String formattedSize = new DecimalFormat("#0.00").format((sizeOfLastBuild / 1024) / 1024);
-                writeToLog("Start downloading: " + job.getJobName() + " (#" + job.getJobID() + "), " + formattedSize + "Mb");
+                String formattedSize = new DecimalFormat("#0.00").format((size / 1024) / 1024);
+                writeToLog("Start downloading: " + jobName + " (#" + jobID + "), " + formattedSize + "Mb");
             }
 
-            //setStatus(MainController.ClientStatus.Downloading, job);
-
-            job.download(file);
-
-            writeToLog("Download complete: " + job.getJobName() + " (#" + job.getJobID() + ")");
-            trayMessage("Download complete: " + job.getJobName() + " (#" + job.getJobID() + ")");
-            //setStatus(MainController.ClientStatus.Connected);
+            startDownload(file);
+            writeToLog("Download complete: " + jobName + " (#" + jobID + ")");
         };
 
         return download;
@@ -546,10 +545,7 @@ public class Job extends Pane {
         );
     }
 
-
-
-
-    private void download(File file)
+    private void startDownload(File file)
     {
         FileOutputStream fileoutputstream;
         InputStream inputstream;

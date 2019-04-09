@@ -35,6 +35,16 @@ import static java.lang.Thread.sleep;
 
 public class MainController
 {
+    private final String bgColor = "#E3F2FD";
+    private final String mainColor = "#0D47A1";
+    private final String secondColor = "#E3F2FD";
+    private final String errorColor = "#D63908";
+    private final String inProcessColor = "#10A3E2";
+    private final String darkTextColor = "#000000";
+    private final String lightTextColor = "#CFD8DC";
+    private final String font = "-fx-font-family: Roboto;";
+
+
     private static Stage settingsStage, helpStage;
     private static final String settingsImageURL = "image/settings(small).png";
     private static final String helpImageURL = "image/help.png";
@@ -63,7 +73,6 @@ public class MainController
     private void initialize() //метод в котором выполняется код при запуске приложения
     {
         allJobs.clear();
-//        downloadableJobs.clear();
 
         AppSettings.loadConfigFile();
 
@@ -124,7 +133,16 @@ public class MainController
             int jobID = getJobIDFromElement(element);
             Job.JobStatusListing status = getJobStatusFromServer(element);
 
-            allJobs.add(new Job(jobName, jobID, status));
+            Job job = new Job(jobName, jobID, status);
+            allJobs.add(job);
+
+            if (job.isFile() || AppSettings.isShowAllJobs())
+                Platform.runLater(
+                        () -> {
+                            botFlowPane.getChildren().addAll(job);
+                        });
+
+
             System.out.println("(MainController) (getJobListFromServer) Job found: " + jobName);
         }
         System.out.println("(MainController) (getJobListFromServer) Job list formatted.");
@@ -192,8 +210,12 @@ public class MainController
         rootPane.setMinSize(WIDTH, HEIGHT);
 
         scrollPane.setMinSize(WIDTH - 20, HEIGHT - 84);
-        botFlowPane.setPrefSize(WIDTH - 35, 10); //было (WIDTH - 35, HEIGHT - 84);
+        botFlowPane.setPrefSize(WIDTH - 35, HEIGHT - 84); //было (WIDTH - 35, HEIGHT - 84);
         //TODO: настроить цвета scrollPane, botFlowPane
+
+
+        scrollPane.setStyle("-fx-background-color: #FFFFFF;");
+        botFlowPane.setStyle("-fx-background-color: #FFFFFF;");
 
         botFlowPane.setOrientation(Orientation.HORIZONTAL);
         botFlowPane.setHgap(10);
@@ -217,6 +239,9 @@ public class MainController
                         out = refreshAllJobsStatus(AppSettings.getServerAddress());   //обновляем статусы всех работ. Возврашает строку с навзаниями работ у которых статус изменился
 
                         if (!out.equals("No jobs has been updated")) {
+                            sortJobsByTime();
+                            showJobs();
+
                             writeToLog(out);
                             trayMessage(out);
                         }
@@ -236,6 +261,12 @@ public class MainController
 
     private void showJobs()
     {
+        Platform.runLater(
+                () -> {
+                    botFlowPane.getChildren().remove(0, botFlowPane.getChildren().size());
+                });
+
+
         Iterator iterator = allJobs.iterator();
 
         Platform.runLater(
@@ -245,7 +276,7 @@ public class MainController
                         Job job = (Job)iterator.next();
 
                         if (job.isFile() || AppSettings.isShowAllJobs())
-                            botFlowPane.getChildren().addAll(job);
+                            botFlowPane.getChildren().add(job);
                     }
                 }
         );
