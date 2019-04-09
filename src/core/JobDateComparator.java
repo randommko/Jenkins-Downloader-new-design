@@ -2,26 +2,26 @@ package core;
 
 import java.util.Comparator;
 
-public class JobDateComparator implements Comparator<JobCard>
+public class JobDateComparator implements Comparator<Job>
 {
-    public int compare(JobCard p, JobCard q) {
-        if ((p.getJob().getLastChangeDate() == null) && (q.getJob().getLastChangeDate() == null))
+    public int compare(Job p, Job q) {
+        if ((p.getLastChangeDate() == null) && (q.getLastChangeDate() == null))
         {
             return 0;
         }
-        else if ((p.getJob().getLastChangeDate() != null) && (q.getJob().getLastChangeDate() == null))
+        else if ((p.getLastChangeDate() != null) && (q.getLastChangeDate() == null))
         {
             return -1;
         }
-        else if ((p.getJob().getLastChangeDate() == null) && (q.getJob().getLastChangeDate() != null))
+        else if ((p.getLastChangeDate() == null) && (q.getLastChangeDate() != null))
         {
             return 1;
         }
         else
         {
-            if (p.getJob().getLastChangeDate().before(q.getJob().getLastChangeDate())) {
+            if (p.getLastChangeDate().before(q.getLastChangeDate())) {
                 return 1;
-            } else if (p.getJob().getLastChangeDate().after(q.getJob().getLastChangeDate())) {
+            } else if (p.getLastChangeDate().after(q.getLastChangeDate())) {
                 return -1;
             } else {
                 return 0;

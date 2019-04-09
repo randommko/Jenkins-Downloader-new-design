@@ -1,8 +1,9 @@
 package view;
 
 import core.AppSettings;
-import core.JenkinsJobs;
+
 import core.Job;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -27,7 +28,7 @@ public class TagSettingsController
     @FXML
     Button saveButton, cancelButton;
 
-    private JenkinsJobs jobs;
+    private ObservableList<Job> jobs;
     private ArrayList<String> list;
 
     @FXML
@@ -49,7 +50,7 @@ public class TagSettingsController
         jobNameColumn.setCellValueFactory(new PropertyValueFactory<>("jobName"));
         jobTagColumn.setCellValueFactory(new PropertyValueFactory<>("visibleName"));
 
-        jobsTable.setItems(this.jobs.getListOfJobs());
+        jobsTable.setItems(jobs);
 
         jobTagColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         jobTagColumn.setOnEditCommit(

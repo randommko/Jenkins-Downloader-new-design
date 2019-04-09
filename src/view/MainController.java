@@ -40,9 +40,9 @@ public class MainController
     private static final String helpImageURL = "image/help.png";
     private final int WIDTH = 810;
     private final int HEIGHT = 800;
-    private static JenkinsJobs jobsForMainForm;
-    private static JenkinsJobs allFoundJobs;
-    private static ObservableList<JobCard> JobCards = FXCollections.observableArrayList ();
+
+    private static ObservableList<Job> allJobs = FXCollections.observableArrayList ();
+
     private Main main;
     public enum ClientStatus {Disconnected, Connected, Downloading, Extracting, Connecting, Updating, _lastStatus}
     private ClientStatus lastStatus, actualStatus;
@@ -62,8 +62,8 @@ public class MainController
     @FXML
     private void initialize() //метод в котором выполняется код при запуске приложения
     {
-        jobsForMainForm = new JenkinsJobs();
-        allFoundJobs = new JenkinsJobs();
+        allJobs.clear();
+//        downloadableJobs.clear();
 
         AppSettings.loadConfigFile();
 
@@ -75,7 +75,6 @@ public class MainController
 
         Thread threadUpdateStatusOfJobs = new Thread(endlessUpdateStatusOfJobs());
         threadUpdateStatusOfJobs.start();
-
     }
 
     @FXML
@@ -83,6 +82,52 @@ public class MainController
     {
         setStatus(ClientStatus.Connecting);
         connect();
+    }
+
+    private void connect()
+    {
+        allJobs.clear();
+
+        botFlowPane.getChildren().clear();
+
+        Runnable runnableGetJobList = () -> {
+
+            if ( isJenkins(AppSettings.getServerAddress()) ) {
+                setStatus(ClientStatus.Updating);
+                trayMessage("Updating job list");
+
+                getJobListFromServer(AppSettings.getServerAddress());
+
+                sortJobsByTime();
+                showJobs();
+
+                setStatus(ClientStatus.Connected);
+            }
+            else
+                setStatus(ClientStatus.Disconnected);
+        };
+
+        Thread threadGetJobList = new Thread(runnableGetJobList);
+        threadGetJobList.start();
+    }
+
+    private void getJobListFromServer(String serverAddress)  //Получение списка работ
+    {
+        System.out.println("(MainController) (getJobListFromServer) Getting job list from server...");
+
+        Iterator jobsFromServerIterator = getJobsIterator(serverAddress);
+
+        while ( jobsFromServerIterator.hasNext() ) {
+            Element element = (Element) jobsFromServerIterator.next();  //берем следующую работу
+
+            String jobName = getJobNameFromElement(element);
+            int jobID = getJobIDFromElement(element);
+            Job.JobStatusListing status = getJobStatusFromServer(element);
+
+            allJobs.add(new Job(jobName, jobID, status));
+            System.out.println("(MainController) (getJobListFromServer) Job found: " + jobName);
+        }
+        System.out.println("(MainController) (getJobListFromServer) Job list formatted.");
     }
 
     @FXML
@@ -114,11 +159,6 @@ public class MainController
 
     @FXML
     private void helpButtonClick()
-    {
-        openHelp();
-    }
-
-    private void openHelp()  //открытие help'a
     {
         Window stage = Main.getStage();
         try {
@@ -173,20 +213,12 @@ public class MainController
             do {
                 if (AppSettings.isAutoUpdate())
                 {
-//                    Iterator iterator = JobCards.iterator();
-//
-//                    while (iterator.hasNext())
-//                    {
-//                        JobCard card = (JobCard) iterator.next();
-//                        JenkinsJobs.updateJobCardStatus(card);
-//                    }
                     try {
-                        out = allFoundJobs.refreshStatusOfAllJobs(AppSettings.getServerAddress());   //обновляем статусы всех работ. Возврашает строку с навзаниями работ у которых статус изменился
+                        out = refreshAllJobsStatus(AppSettings.getServerAddress());   //обновляем статусы всех работ. Возврашает строку с навзаниями работ у которых статус изменился
 
                         if (!out.equals("No jobs has been updated")) {
                             writeToLog(out);
                             trayMessage(out);
-                            //TODO: здесь нужно изменять JobCards у которых произошли изменения в статусе
                         }
                     }
                     catch (Exception e) {
@@ -202,93 +234,28 @@ public class MainController
         return updateStatus;
     }
 
-    private void connect()
+    private void showJobs()
     {
-        jobsForMainForm.clear();
-        allFoundJobs.clear();
+        Iterator iterator = allJobs.iterator();
 
-        botFlowPane.getChildren().clear();
-        JobCards.clear();
-
-        String serverAddress = AppSettings.getServerAddress();
-
-        Runnable runnableGetJobList = () -> {
-
-            if ( isJenkins(serverAddress) ) {
-                setStatus(ClientStatus.Updating);
-                trayMessage("Updating job list");
-
-                refreshingAllJobsStatus(serverAddress);
-
-                Iterator iterator = jobsForMainForm.getListOfJobs().iterator();
-
-                while (iterator.hasNext())
-                {
-                    Job job = (Job) iterator.next();
-                    JobCards.add(new JobCard(job));
-                }
-                sortJobCardsByTime();
-                showAllJobCard();
-            }
-            else
-                setStatus(ClientStatus.Disconnected);
-        };
-
-        Thread threadGetJobList = new Thread(runnableGetJobList);
-        threadGetJobList.start();
-    }
-
-    private void showAllJobCard()
-    {
-        Iterator iterator = JobCards.iterator();
         Platform.runLater(
                 () -> {
                     while (iterator.hasNext())
                     {
-                        botFlowPane.getChildren().addAll((JobCard)iterator.next());
+                        Job job = (Job)iterator.next();
+
+                        if (job.isFile() || AppSettings.isShowAllJobs())
+                            botFlowPane.getChildren().addAll(job);
                     }
                 }
         );
     }
 
-    private void sortJobCardsByTime()
+    private void sortJobsByTime()
     {
         JobDateComparator comparator = new JobDateComparator();
-        FXCollections.sort(JobCards, comparator);
-    }
-
-    private void refreshingAllJobsStatus(String serverAddress)
-    {
-        try {
-            jobsForMainForm.getJobListFromServer(serverAddress);    //Получение спика работ
-
-            allFoundJobs = new JenkinsJobs(jobsForMainForm);    //копируем список
-
-            //System.out.println("(MainController) (refreshingAllJobsStatus) AppSettings.isShowAllJobs():" + AppSettings.isShowAllJobs());
-            if (!AppSettings.isShowAllJobs())   //если нужно отображать только скачиваемые джобы то удаляем ненужные элементы
-            {
-                Iterator iterator = jobsForMainForm.getListOfJobs().iterator();
-                while (iterator.hasNext())
-                {
-                    Job job = (Job) iterator.next();
-                    if ( !job.isFile() )
-                        iterator.remove();
-                }
-            }
-            writeToLog("Job list has been updated.");
-            setStatus(ClientStatus.Connected);
-        }
-        catch (IllegalArgumentException err)
-        {
-            writeToLog("Incorrect server address");
-            System.out.println("(MainController) (refreshingAllJobsStatus) Incorrect server address: " + err);
-            setStatus(ClientStatus.Disconnected);
-        }
-        catch (Exception error)
-        {
-            System.out.println("(MainController) (refreshingAllJobsStatus) Unknown error: " + error);
-            setStatus(ClientStatus.Disconnected);
-        }
+        FXCollections.sort(allJobs, comparator);
+        System.out.println("(MainController) (sortJobsByTime) 'allJobs' sorted by time.");
     }
 
     private boolean isJenkins(String address)
@@ -513,8 +480,169 @@ public class MainController
 
     public static Stage getHelpStage() { return helpStage;}
 
-    public JenkinsJobs getListOfJobs()
+    public ObservableList getListOfJobs()
     {
-        return allFoundJobs;
+        return allJobs;
+    }
+
+
+    private Iterator getJobsIterator(String serverAddress)
+    {
+        try
+        {
+            Document document = Jsoup.connect(serverAddress).get(); //получаем копию страницы в виде документа
+            Elements elements = document.select("tr[class*=job-status]");   //создаем список tr-элементов страницы которые содержат текст "job-status" внутри себя
+            return elements.iterator();  //создаем итератор по элментам страницы содержащим имена работ
+        }
+        catch (IOException e)
+        {
+            System.out.println("(MainController) (getJobsIterator) Error: " + e);
+            return null;
+        }
+    }
+
+
+
+    private Job.JobStatusListing getJobStatusFromServer(Element element)    //получения статуса работы по элементу
+    {
+        Elements statusElem = element.select("img");
+        Iterator statusIterator = statusElem.iterator();
+
+        while (statusIterator.hasNext())
+        {
+            String jobStatus;
+            Element statusElement = (Element) statusIterator.next();
+            jobStatus = statusElement.attr("alt");
+
+            switch (jobStatus)    //далее нужно считать строку и выбрать соответствующий статус
+            {
+                case "Успешно":
+                    return Job.JobStatusListing.Успешно;
+                case "Провалилось":
+                    return Job.JobStatusListing.Провалилось;
+                case "Прервано":
+                    return Job.JobStatusListing.Прервано;
+                case "Приостановлено":
+                    return Job.JobStatusListing.Приостановлено;
+                case "В процессе":
+                    return Job.JobStatusListing.Впроцессе;
+                case "built":
+                    return Job.JobStatusListing.built;
+                default:
+                    return Job.JobStatusListing.Неизвестно;
+            }
+        }
+        return Job.JobStatusListing.Ошибка;
+    }
+
+    private String getJobNameFromElement(Element element)
+    {
+        String jobName = element.attr("id");                         //находим строку начинающуюся с "id"
+        jobName = jobName.substring(4, jobName.length());                       //берем символы с 4 до последнего, это и есть имя работы
+        return jobName;
+    }
+
+    private int getJobIDFromElement(Element element)
+    {
+        String _s1 = element.child(3).text();
+        int posNumber = _s1.indexOf("#");
+        String stringJobID = _s1.substring(posNumber + 1);
+        return getIntJobID(stringJobID);
+    }
+
+    private int getIntJobID(String stringJobID)
+    {
+        int jobID = -1;
+        try {
+            jobID = Integer.parseInt(stringJobID);
+        }
+        catch (NumberFormatException e) {
+            //System.out.println("Error in getting job ID (int): " + e);
+        }
+        return jobID;
+    }
+
+    private String refreshAllJobsStatus(String address)
+    {
+        String out = "";
+
+        Iterator iteratorListOfJobs = getJobsIterator(address);
+
+        while ( iteratorListOfJobs.hasNext() ) {
+            Element element = (Element) iteratorListOfJobs.next();                  //берем следующую работу
+
+            String jobName                  = getJobNameFromElement(element);
+            int jobID                       = getJobIDFromElement(element);
+            Job.JobStatusListing status     = getJobStatusFromServer(element);
+
+            for (int i = 0; i < allJobs.size(); i++)
+            {
+                Job job = allJobs.get(i);
+
+                if ( job.getJobName().equals(jobName) && (!job.getJobStatus().equals(status)) )
+                {
+                    allJobs.get(i).setJobStatus(status);
+
+                    if (allJobs.get(i).getJobID() != jobID)
+                        allJobs.get(i).setJobID(jobID);
+                    System.out.println("\n(MainController)" + allJobs.get(i).getJobName() + " changed status to: " + allJobs.get(i).getJobStatus());
+
+
+                    out = formationStringWithChangedJobs(out, allJobs.get(i));
+                    break;
+                }
+            }
+        }
+
+        if (!out.equals(""))
+            out = out.substring(0, out.length() - 1);   //если были изменения в статусах то убираем последний перенос строки
+        else
+            out = "No jobs has been updated";           //иначе формируем строку для вывода в консоль
+
+        Date date = new Date();
+        SimpleDateFormat formatForDateNow = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+
+        System.out.println(formatForDateNow.format(date) + "/ Status of auto update:" + ": " + out);
+
+        return out;
+    }
+
+    public void updateJobStatus (Job job)
+    {
+        Iterator iteratorListOfJobs = getJobsIterator(AppSettings.getServerAddress());
+
+        while ( iteratorListOfJobs.hasNext() ) {
+            Element element = (Element) iteratorListOfJobs.next();                  //берем следующую работу
+
+            String jobName = getJobNameFromElement(element);
+
+            if (jobName.equals(job.getJobName()))
+            {
+                int jobID = getJobIDFromElement(element);
+                Job.JobStatusListing status = getJobStatusFromServer(element);
+
+                job.setJobStatus(status);
+                job.setJobID(jobID);
+
+                //TODO: добавить функции для изменения состояния джобы, иконки состояния джобы, описания джобы, времени изменения состояния джобы, номера сбокри джобы
+                //job.changeJobStatusInCard(status, card.getJob().getLastChange(), jobID);
+            }
+        }
+    }
+
+    private String formationStringWithChangedJobs(String actualString, Job job)
+    {
+        if ( job.getJobStatus() == Job.JobStatusListing.Впроцессе )   //Если джоба в процессе то не нужно отображать номер
+            if (job.getVisibleName().equals(""))
+                actualString = actualString + "\"" + job.getJobName() + "\" changed status to: " + "\"В процессе.\"" + "\n";
+            else
+                actualString = actualString + "\"" + job.getVisibleName() + "\" changed status to: " + "\"В процессе.\"" + "\n";
+        else
+        if (job.getVisibleName().equals(""))
+            actualString = actualString + "\"" + job.getJobName() + " (#" + job.getJobID() + ")\" changed status to: \"" + job.getJobStatus() + "\"\n";
+        else
+            actualString = actualString + "\"" + job.getVisibleName() + " (#" + job.getJobID() + ")\" changed status to: \"" + job.getJobStatus() + "\"\n";
+
+        return actualString;
     }
 }

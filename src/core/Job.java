@@ -21,7 +21,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
+
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -31,7 +31,7 @@ import java.util.Date;
 import static core.AppSettings.findTagInConfigFile;
 import static core.AppSettings.findTimeInConfigFile;
 
-//TODO: класс Job превратить в JobCard
+
 public class Job extends Pane {
 
     public enum JobStatusListing {built,  Успешно, Провалилось, Прервано, Приостановлено, Впроцессе, Неизвестно, Ошибка}
@@ -58,11 +58,12 @@ public class Job extends Pane {
     private final String darkTextColor = "#000000";
     private final String lightTextColor = "#CFD8DC";
     private final String font = "-fx-font-family: Roboto;";
-    private final String rounding = "-fx-border-radius: 10, 10, 10, 10;" +
-            "-fx-background-radius: 10, 10, 10, 10;";
+    private final String rad = "5";
+    private final String rounding = "-fx-border-radius: " + rad +", " + rad + " , " + rad + ", " +  rad + ";" +
+            "-fx-background-radius:" + rad +", " + rad + " , " + rad + ", " +  rad + ";";
 
-    double CARD_WIDTH = 250;    //ШИРИНА
-    double CARD_HEIGHT = 170;   //ВЫСОТА
+    private double CARD_WIDTH = 250;    //ШИРИНА
+    private double CARD_HEIGHT = 165;   //ВЫСОТА
 
     private String visibleName; //отображемое имя (необязательно)
     private int jobID;          //номер последней сборки
@@ -82,18 +83,6 @@ public class Job extends Pane {
 
 
 //TODO: переработать этот класс. Сделать одну функцию на скачивание которая вызывается при нажатии на кнопку
-
-    public Job (Job job)
-    {
-        this.jobName        = job.getJobName();
-        this.jobID          = job.getJobID();
-        this.jobURL         = job.getJobURL();
-        this.jobStatus      = job.getJobStatus();
-        this.isFile         = job.isFile();
-        this.visibleName    = job.getVisibleName();
-        this.lastChange     = job.getLastChange();
-        this.size           = job.getSize();
-    }
 
     public Job (String jobName, int jobID, JobStatusListing jobStatus)
     {
@@ -303,6 +292,7 @@ public class Job extends Pane {
         downloadButton.setOnMouseClicked((event)->{
             startJobDownload(this);
         });
+
         downloadButton.setOnMousePressed((event -> {
             downloadButton.setStyle(font + "-fx-border-color: transparent;" +
                     "    -fx-background-color: " + mainColor + ";" +
@@ -370,7 +360,7 @@ public class Job extends Pane {
                 return false;
             }
         }
-        double size = job.getSize();
+        //double size = job.getSize();
 
         progressBar.setProgress(0);
         File file = new File(folder, job.getJobID() + ".zip");
@@ -412,14 +402,15 @@ public class Job extends Pane {
         Platform.runLater(
                 () ->
                 {
-                    System.out.println("(JobCard) (writeToLog) Log msg:  " + text);
+                    //System.out.println("(Job) (writeToLog) Log msg:  " + text);
                     Date date = new Date();
                     SimpleDateFormat formatForDateNow = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
 
                     try {
                         //logTextArea.setText(formatForDateNow.format(date) + ": " + text + "\n" + logTextArea.getText());
+                        System.out.println("(Job) (writeToLog) " + formatForDateNow.format(date) + ":  " + text);
                     } catch (Exception e) {
-                        System.out.println("(JobCard) Error on write to log: " + e);
+                        System.out.println("(Job) Error on write to log: " + e);
                     }
                 }
         );
@@ -465,10 +456,6 @@ public class Job extends Pane {
         return jobStatus;
     }
 
-    public URL getJobURL() {
-        return jobURL;
-    }
-
     public boolean isFile() {
         return isFile;
     }
@@ -479,7 +466,7 @@ public class Job extends Pane {
 
     public Date getLastChangeDate()
     {
-        if (lastChange != "-")
+        if (!lastChange.equals("-"))
         {
             Date lastChangeDate;
 
@@ -509,10 +496,6 @@ public class Job extends Pane {
         AppSettings.changeSettingInConfig(jobName + "_time", this.lastChange);  //запись в конфиг времени последнего изменения
     }
 
-    public double getSize() {
-        return size;
-    }
-
     public void setJobStatus(JobStatusListing jobStatus) {
         this.jobStatus = jobStatus;
         SimpleDateFormat formatForDateNow = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
@@ -525,7 +508,7 @@ public class Job extends Pane {
 
     private Runnable download (Job job, double sizeOfLastBuild, File file)
     {
-        Runnable download = () -> {
+         Runnable download = () -> {
             if (sizeOfLastBuild == -1.0)
                 writeToLog("Start downloading: " + job.getJobName() + " (#" + job.getJobID() + ")");
             else {
@@ -557,7 +540,7 @@ public class Job extends Pane {
                     }
                     catch (Exception e)
                     {
-                        System.out.println("(JobCard) Can't display tray message: " + e);
+                        System.out.println("(Job) Can't display tray message: " + e);
                     }
                 }
         );
@@ -566,7 +549,7 @@ public class Job extends Pane {
 
 
 
-    public void download(File file)
+    private void download(File file)
     {
         FileOutputStream fileoutputstream;
         InputStream inputstream;

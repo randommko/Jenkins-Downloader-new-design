@@ -108,7 +108,6 @@ public class SettingsController {
     @FXML
     private void openTagSettings()   //открите настроек тэгов
     {
-        //TODO: не котрывает окно настроек тэгов
         try {
 
             Parent settingsRoot = FXMLLoader.load(getClass().getClassLoader().getResource("view/TagSettings.fxml"));
