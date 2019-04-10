@@ -153,8 +153,8 @@ public class Main extends Application
                     System.out.println("Can't display tray message: " + e);
                 }
             };
-            Thread threadUpdateStatusOfJobs = new Thread(showMsg);
-            threadUpdateStatusOfJobs.start();
+            Thread trayMessage = new Thread(showMsg);
+            trayMessage.start();
     }
 
     public static Window getStage()

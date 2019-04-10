@@ -16,6 +16,7 @@ import javafx.scene.layout.VBox;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -609,8 +610,9 @@ public class Job extends Pane {
                 writeToLog("Start downloading: " + jobName + " (#" + jobID + "), " + formattedSize + "Mb");
             }
 
-            startDownload(file);
-            writeToLog("Download complete: " + jobName + " (#" + jobID + ")");
+             startDownload(file);
+             writeToLog("Download complete: " + jobName + " (#" + jobID + ")");
+             showMessageInTray("Download complete: " + jobName + " (#" + jobID + ")");
              showDownloadButton();
         };
 
@@ -700,5 +702,25 @@ public class Job extends Pane {
         {
             System.out.println("(MainController) (sleep) Can't call sleep method: " + err);
         }
+    }
+
+    private void showMessageInTray (String text)
+    {
+        Main main = new Main();
+        TrayIcon trayIcon = main.getTrayIcon();
+
+        Runnable showMsg = () -> {
+            try {
+                String caption = "Jenkins Downloader";  //заголовок сообщения
+                if (AppSettings.isShowNotifications())
+                    trayIcon.displayMessage(caption, text, TrayIcon.MessageType.INFO); //метод отображения сообщения в трее
+            }
+            catch (Exception e)
+            {
+                System.out.println("Can't display tray message: " + e);
+            }
+        };
+        Thread trayMessage = new Thread(showMsg);
+        trayMessage.start();
     }
 }
