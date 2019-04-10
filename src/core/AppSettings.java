@@ -205,6 +205,40 @@ public class AppSettings
         return out;
     }
 
+    public static boolean findFavoriteInConfigFile(String nameOfJob)
+    {
+        boolean out = false;
+        File configFile = new File(FILE_CONFIG_NAME);
+
+        if (!configFile.exists())
+            createConfigFile(configFile);
+
+        switch (CONFIG_FLAG) {
+            case "JSON":
+
+                break;
+            case "XML":
+
+                break;
+            case "SIMPLE":
+                try {
+                    FileInputStream input = new FileInputStream(configFile);
+                    properties = new Properties();
+                    properties.load(new InputStreamReader(input));  //  properties.load(new InputStreamReader(input, Charset.forName("UTF-8")))
+                    out = Boolean.valueOf(properties.getProperty(nameOfJob + "_favorite"));
+                } catch (Exception e) {
+                    //System.out.println("(AppSettings) (findSizeInConfigFile) Job size not found: " + e);
+                }
+                break;
+            default:
+                out = false;
+                System.out.println("(AppSettings) (findSizeInConfigFile) File not found");
+                break;
+        }
+
+        return out;
+    }
+
     public static void changeSettingInConfig(String changeSetting, String newValue)
     {
         newValue = changeSetting + "\t\t" + newValue;

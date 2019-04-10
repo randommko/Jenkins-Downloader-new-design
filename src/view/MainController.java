@@ -52,6 +52,7 @@ public class MainController
     private final int HEIGHT = 800;
 
     private static ObservableList<Job> allJobs = FXCollections.observableArrayList ();
+    private static ObservableList<Job> favoritsJobs = FXCollections.observableArrayList ();
 
     private Main main;
     public enum ClientStatus {Disconnected, Connected, Downloading, Extracting, Connecting, Updating, _lastStatus}
@@ -59,7 +60,7 @@ public class MainController
     @FXML
     private AnchorPane rootPane;
     @FXML
-    private FlowPane botFlowPane;
+    private FlowPane botFlowPane, favoriteFlowPane;
     @FXML
     private ScrollPane scrollPane;
     @FXML
@@ -135,12 +136,19 @@ public class MainController
 
             Job job = new Job(jobName, jobID, status);
             allJobs.add(job);
-
-            if (job.isFile() || AppSettings.isShowAllJobs())
+            //TODO: добавить разделение на любимые и не любимые джобы
+            if (job.isFavorite())   //проверяем является ли джоба любимой. Если да, то дабавляем её на верхнюю панель
+            {
                 Platform.runLater(
                         () -> {
-                            botFlowPane.getChildren().addAll(job);
+                            favoriteFlowPane.getChildren().addAll(job);
                         });
+            }
+            else if (job.isFile() || AppSettings.isShowAllJobs())
+                    Platform.runLater(
+                            () -> {
+                                botFlowPane.getChildren().addAll(job);
+                            });
 
 
             System.out.println("(MainController) (getJobListFromServer) Job found: " + jobName);

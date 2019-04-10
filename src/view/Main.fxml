@@ -51,6 +51,7 @@
             </HBox>
             <AnchorPane prefHeight="751.0" styleClass="anchorPane" stylesheets="@../css/Main.css">
                <children>
+                  <FlowPane fx:id="favoriteFlowPane" AnchorPane.bottomAnchor="746.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="5.0" />
                   <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" layoutX="10.0" layoutY="35.0" styleClass="scrollPane" stylesheets="@../css/Main.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="5.0">
                      <content>
                         <FlowPane fx:id="botFlowPane" hgap="10.0" styleClass="flowPane" stylesheets="@../css/Main.css" vgap="10.0" />

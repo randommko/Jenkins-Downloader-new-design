@@ -29,11 +29,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import static core.AppSettings.findFavoriteInConfigFile;
 import static core.AppSettings.findTagInConfigFile;
 import static core.AppSettings.findTimeInConfigFile;
 
 
 public class Job extends Pane {
+
+
 
     public enum JobStatusListing {built,  Успешно, Провалилось, Прервано, Приостановлено, Впроцессе, Неизвестно, Ошибка}
 
@@ -84,8 +87,9 @@ public class Job extends Pane {
     private boolean isFile;
     private String lastChange;
     private double size;    //размер джобы
+    private boolean isFavorite = false;
 
-    private boolean favorite = false;
+//    private boolean favorite = false;
 
     private static final String favoriteIconLoc
             = "image/favorite_icon.png";
@@ -113,10 +117,14 @@ public class Job extends Pane {
         else
             this.visibleName    = "";
 
-        if ( !(findTimeInConfigFile(jobName)).equals(""))
+        if ( !(findTimeInConfigFile(jobName)).equals(""))       //ищем в конфиг-файле время последнего изменения
             this.lastChange = (findTimeInConfigFile(jobName));
         else
             this.lastChange     = "-";
+
+
+        this.isFavorite = findFavoriteInConfigFile(jobName);
+
 
         try
         {
@@ -235,7 +243,7 @@ public class Job extends Pane {
         Image favoriteIconImage = new Image(favoriteIconLoc);
         Image unfavoriteIconImage = new Image(unfavoriteIconLoc);
 
-        if (favorite)
+        if (isFavorite)
         {
             favoriteIconButton.setGraphic(new ImageView(favoriteIconImage));
         }
@@ -245,8 +253,9 @@ public class Job extends Pane {
         }
 
         favoriteIconButton.setOnMouseClicked(event -> {
-            favorite = !favorite;
-            if (favorite)
+            isFavorite = !isFavorite;
+            AppSettings.changeSettingInConfig(jobName + "_favorite", String.valueOf(isFavorite));
+            if (isFavorite)
             {
                 favoriteIconButton.setGraphic(new ImageView(favoriteIconImage));
             }
@@ -468,6 +477,10 @@ public class Job extends Pane {
 
     public boolean isFile() {
         return isFile;
+    }
+
+    public boolean isFavorite() {
+        return isFavorite;
     }
 
     public Date getLastChangeDate()
