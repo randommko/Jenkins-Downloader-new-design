@@ -255,6 +255,7 @@ public class Job extends Pane {
         favoriteIconButton.setOnMouseClicked(event -> {
             isFavorite = !isFavorite;
             AppSettings.changeSettingInConfig(jobName + "_favorite", String.valueOf(isFavorite));
+            //TODO: добавить перерисовку всех карточек при добавлении/удалии работы в избранные
             if (isFavorite)
             {
                 favoriteIconButton.setGraphic(new ImageView(favoriteIconImage));
@@ -372,7 +373,6 @@ public class Job extends Pane {
         progressBar = new ProgressBar();
 
         progressBar.setVisible(false);
-        //TODO: сделать прогресс бар красивым!
         progressBar.getStylesheets().add("css/JobCard.css");
         progressBar.setPrefSize(CARD_WIDTH - 6, 16);
         progressBar.setProgress(0);
@@ -503,6 +503,11 @@ public class Job extends Pane {
             return null;
     }
 
+    public double getCardHeight()
+    {
+        return CARD_HEIGHT;
+    }
+    public double getCardWidth() {return  CARD_WIDTH;}
 
 
     public void setVisibleName(String visibleName) {

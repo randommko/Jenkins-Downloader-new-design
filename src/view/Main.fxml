@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
@@ -15,7 +16,7 @@
    <children>
       <VBox stylesheets="@../css/Main.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <HBox alignment="CENTER_LEFT" minHeight="50.0" prefHeight="50.0" spacing="10.0" styleClass="hBox" stylesheets="@../css/Main.css">
+            <HBox fx:id="topBarHBox" alignment="CENTER_LEFT" minHeight="50.0" prefHeight="50.0" spacing="10.0" styleClass="hBox" stylesheets="@../css/Main.css">
                <children>
                   <Button depthTest="DISABLE" mnemonicParsing="false" onAction="#onSettingsClick" pickOnBounds="false" prefHeight="25.0" prefWidth="75.0" stylesheets="@../css/Main.css" text="Settings">
                      <font>
@@ -49,12 +50,17 @@
                   <Insets left="10.0" />
                </padding>
             </HBox>
-            <AnchorPane prefHeight="751.0" styleClass="anchorPane" stylesheets="@../css/Main.css">
+            <AnchorPane fx:id="jobsAnchorPane" prefHeight="751.0" styleClass="anchorPane" stylesheets="@../css/Main.css">
                <children>
-                  <FlowPane fx:id="favoriteFlowPane" AnchorPane.bottomAnchor="746.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="5.0" />
                   <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" layoutX="10.0" layoutY="35.0" styleClass="scrollPane" stylesheets="@../css/Main.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="5.0">
                      <content>
-                        <FlowPane fx:id="botFlowPane" hgap="10.0" styleClass="flowPane" stylesheets="@../css/Main.css" vgap="10.0" />
+                        <VBox fx:id="vBoxWithCards" spacing="10.0">
+                           <children>
+                              <FlowPane fx:id="favoriteFlowPane" hgap="10.0" styleClass="flowPane" stylesheets="@../css/Main.css" vgap="10.0" />
+                              <Separator fx:id="cardsSeparator" stylesheets="@../css/Main.css" />
+                              <FlowPane fx:id="botFlowPane" hgap="10.0" styleClass="flowPane" stylesheets="@../css/Main.css" vgap="10.0" />
+                           </children>
+                        </VBox>
                      </content>
                   </ScrollPane>
                </children></AnchorPane>

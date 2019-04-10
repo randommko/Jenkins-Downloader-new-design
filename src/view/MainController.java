@@ -12,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -30,6 +31,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
+import static core.Main.SCENE_HEIGHT;
+import static core.Main.SCENE_WIDTH;
 import static java.lang.Thread.sleep;
 
 
@@ -48,8 +51,8 @@ public class MainController
     private static Stage settingsStage, helpStage;
     private static final String settingsImageURL = "image/settings(small).png";
     private static final String helpImageURL = "image/help.png";
-    private final int WIDTH = 810;
-    private final int HEIGHT = 800;
+    private final int WIDTH = SCENE_WIDTH;
+    private final int HEIGHT = SCENE_HEIGHT;
 
     private static ObservableList<Job> allJobs = FXCollections.observableArrayList ();
     private static ObservableList<Job> favoritsJobs = FXCollections.observableArrayList ();
@@ -58,7 +61,7 @@ public class MainController
     public enum ClientStatus {Disconnected, Connected, Downloading, Extracting, Connecting, Updating, _lastStatus}
     private ClientStatus lastStatus, actualStatus;
     @FXML
-    private AnchorPane rootPane;
+    private AnchorPane rootPane, jobsAnchorPane;
     @FXML
     private FlowPane botFlowPane, favoriteFlowPane;
     @FXML
@@ -67,6 +70,12 @@ public class MainController
     private ProgressIndicator progressIndicator;
     @FXML
     private Label statusLabel;
+    @FXML
+    private VBox vBoxWithCards;
+    @FXML
+    private Separator cardsSeparator;
+    @FXML
+    private HBox topBarHBox;
 
 
 
@@ -97,8 +106,13 @@ public class MainController
     private void connect()
     {
         allJobs.clear();
+        favoritsJobs.clear();
 
         botFlowPane.getChildren().clear();
+        favoriteFlowPane.getChildren().clear();
+
+        favoriteFlowPane.setPrefSize(WIDTH - 35 ,0);
+        botFlowPane.setPrefSize(WIDTH - 35, HEIGHT - 84);
 
         Runnable runnableGetJobList = () -> {
 
@@ -135,8 +149,13 @@ public class MainController
             Job.JobStatusListing status = getJobStatusFromServer(element);
 
             Job job = new Job(jobName, jobID, status);
-            allJobs.add(job);
-            //TODO: добавить разделение на любимые и не любимые джобы
+
+
+            if (job.isFavorite())
+                favoritsJobs.addAll(job);
+            else
+                allJobs.add(job);
+
             if (job.isFavorite())   //проверяем является ли джоба любимой. Если да, то дабавляем её на верхнюю панель
             {
                 Platform.runLater(
@@ -212,18 +231,32 @@ public class MainController
 
     private void initWindow()
     {
+        //TODO: последние каточки уходят за видимую зону.
         //WIDTH - ширина
         //HEIGHT - высота
         rootPane.setMaxSize(WIDTH, HEIGHT);
         rootPane.setMinSize(WIDTH, HEIGHT);
 
+        topBarHBox.setPrefSize(WIDTH, 50);
+
+        vBoxWithCards.setPrefSize(WIDTH, HEIGHT - topBarHBox.getHeight());
+
+        jobsAnchorPane.setMinSize(WIDTH, HEIGHT - topBarHBox.getHeight());
+        jobsAnchorPane.setMaxSize(WIDTH, HEIGHT - topBarHBox.getHeight());
+
         scrollPane.setMinSize(WIDTH - 20, HEIGHT - 84);
-        botFlowPane.setPrefSize(WIDTH - 35, HEIGHT - 84); //было (WIDTH - 35, HEIGHT - 84);
-
-
         scrollPane.setStyle("-fx-background-color: #FFFFFF;");
-        botFlowPane.setStyle("-fx-background-color: #FFFFFF;");
 
+        favoriteFlowPane.setStyle("-fx-background-color: #FFFFFF;");
+        favoriteFlowPane.setOrientation(Orientation.HORIZONTAL);
+        favoriteFlowPane.setHgap(10);
+        favoriteFlowPane.setVgap(10);
+        favoriteFlowPane.setPrefSize(WIDTH - 35 ,0);
+
+        cardsSeparator.setPrefSize(WIDTH - 20 ,1);
+
+        botFlowPane.setPrefSize(WIDTH - 35, HEIGHT - 84);
+        botFlowPane.setStyle("-fx-background-color: #FFFFFF;");
         botFlowPane.setOrientation(Orientation.HORIZONTAL);
         botFlowPane.setHgap(10);
         botFlowPane.setVgap(10);
@@ -271,11 +304,28 @@ public class MainController
         Platform.runLater(
                 () -> {
                     botFlowPane.getChildren().remove(0, botFlowPane.getChildren().size());
+                    favoriteFlowPane.getChildren().remove(0, favoriteFlowPane.getChildren().size());
                 });
 
 
-        Iterator iterator = allJobs.iterator();
+        Iterator favoriteJobIterator = favoritsJobs.iterator();
+        Platform.runLater(
+                () -> {
+                    while (favoriteJobIterator.hasNext())
+                    {
+                        Job job = (Job)favoriteJobIterator.next();
+                        favoriteFlowPane.getChildren().add(job);
+                        if (favoriteFlowPane.getChildren().size() %  (int)(favoriteFlowPane.getWidth() / job.getCardWidth()) == 0) {
+                            favoriteFlowPane.setPrefSize(WIDTH - 35, favoriteFlowPane.getHeight() + job.getCardHeight());
+                            botFlowPane.setPrefSize(WIDTH - 35, jobsAnchorPane.getHeight() - favoriteFlowPane.getHeight());
+                        }
 
+
+                    }
+                }
+        );
+
+        Iterator iterator = allJobs.iterator();
         Platform.runLater(
                 () -> {
                     while (iterator.hasNext())

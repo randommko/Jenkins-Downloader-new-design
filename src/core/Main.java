@@ -20,7 +20,7 @@ import java.util.Timer;
 
 public class Main extends Application
 {
-    public static final int SCENE_WIDTH = 801;
+    public static final int SCENE_WIDTH = 810;
     public static final int SCENE_HEIGHT = 800;
 
     private static Stage stage;

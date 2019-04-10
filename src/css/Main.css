@@ -141,6 +141,8 @@
 }
 
 .separator {
+    -fx-fill-color: transparent;
+    /*-fx-border-color: #000000;*/
 }
 
 .checkbox {
@@ -167,3 +169,6 @@
     -fx-progress-color: #CFD8DC;
 }
 
+.vbox {
+    -fx-background-color: #000000;
+}
