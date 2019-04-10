@@ -1,0 +1,38 @@
+/*
+    private final String mainColor = "#0D47A1";
+    private final String backgroundColor = "#E3F2FD";
+    private final String errorColor = "#D63908";
+    private final String inProcessColor = "#10A3E2";
+    private final String darkTextColor = "#000000";
+    private final String lightTextColor = "#CFD8DC";
+    private final String font = "-fx-font-family: Roboto;";
+
+    */
+
+
+.progress-bar {
+    -fx-background-color: #E3F2FD;
+    -fx-background-radius: 4, 4, 4, 4;
+    -fx-border-radius: 4, 4, 4, 4;
+    -fx-border-color: #E3F2FD;
+
+}
+
+.progress-bar .track{
+    -fx-background-color: #0D47A1;  /* #E3F2FD */
+    -fx-border-color: #0D47A1;
+    -fx-background-insets: 20;
+    -fx-background-radius: 4, 4, 4, 4;
+}
+
+.progress-bar .bar {
+    -fx-fill-color: #0D47A1;
+    -fx-background-insets: 0, 0, 0, 0;
+    -fx-background-radius: 4, 4, 4, 4;
+    -fx-border-radius: 4, 4, 4, 4;
+}
+
+/*
+-fx-border-radius: 5, 5, 5, 5;
+    -fx-background-radius: 5, 5, 5, 5;
+    */

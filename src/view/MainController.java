@@ -211,7 +211,6 @@ public class MainController
 
         scrollPane.setMinSize(WIDTH - 20, HEIGHT - 84);
         botFlowPane.setPrefSize(WIDTH - 35, HEIGHT - 84); //было (WIDTH - 35, HEIGHT - 84);
-        //TODO: настроить цвета scrollPane, botFlowPane
 
 
         scrollPane.setStyle("-fx-background-color: #FFFFFF;");
@@ -340,7 +339,7 @@ public class MainController
         );
     }
 
-    public void setStatus (ClientStatus status, Job job)    //установка статуса клиента (приложения)
+        private void setStatus (ClientStatus status)    //установка статуса клиента (приложения)
     {
 
         try
@@ -353,37 +352,37 @@ public class MainController
                 case Connecting:
                     lastStatus = actualStatus;
                     progressIndicator.setVisible(true);
-                    setStatusText("Finding Jenkins on: \"" + AppSettings.getServerAddress() + "\"", Color.GREEN);
+                    setStatusText("Finding Jenkins on: \"" + AppSettings.getServerAddress() + "\"");
                     actualStatus = ClientStatus.Connecting;
                     break;
                 case Connected:
                     lastStatus = actualStatus;
                     progressIndicator.setVisible(false);
-                    setStatusText("Connected to \"" + AppSettings.getServerAddress()+ "\"", Color.GREEN);
+                    setStatusText("Connected to \"" + AppSettings.getServerAddress()+ "\"");
                     actualStatus = ClientStatus.Connected;
                     break;
                 case Updating:
                     lastStatus = actualStatus;
                     progressIndicator.setVisible(true);
-                    setStatusText("Getting job list from \"" + AppSettings.getServerAddress() + "\"", Color.GREEN);
+                    setStatusText("Getting job list from \"" + AppSettings.getServerAddress() + "\"");
                     actualStatus = ClientStatus.Updating;
                     break;
                 case Extracting:
                     lastStatus = actualStatus;
                     progressIndicator.setVisible(true);
-                    setStatusText("Extracting " + job.getJobName() + " (#" + job.getJobID() + ") in \"" + AppSettings.getSavePath() + "\\" + job.getJobName() + "\"", Color.GREEN);
+                    setStatusText("Extracting...");
                     actualStatus = ClientStatus.Extracting;
                     break;
                 case Downloading:
                     lastStatus = actualStatus;
                     progressIndicator.setVisible(true);
-                    setStatusText("Downloading \"" + job.getJobName() + " (#" + job.getJobID() + ")\" in \"" + AppSettings.getSavePath() + "\\" + job.getJobName() + "\\" + job.getJobID() + ".zip\"", Color.GREEN);
+                    setStatusText("Downloading in " + AppSettings.getSavePath());
                     actualStatus = ClientStatus.Downloading;
                     break;
                 case Disconnected:
                     lastStatus = actualStatus;
                     progressIndicator.setVisible(true);
-                    setStatusText("Can't find Jenkins server on \"" + AppSettings.getServerAddress() + "\"", Color.RED);
+                    setStatusText("Can't find Jenkins server on \"" + AppSettings.getServerAddress() + "\"");
                     actualStatus = ClientStatus.Disconnected;
                     break;
                 default:
@@ -400,67 +399,7 @@ public class MainController
 
     }
 
-    private void setStatus (ClientStatus status)    //установка статуса клиента (приложения)
-    {
-
-        try
-        {
-            switch (status)
-            {
-                case _lastStatus:
-                    actualStatus = lastStatus;
-                    break;
-                case Connecting:
-                    lastStatus = actualStatus;
-                    progressIndicator.setVisible(true);
-                    setStatusText("Finding Jenkins on: \"" + AppSettings.getServerAddress() + "\"", Color.GREEN);
-                    actualStatus = ClientStatus.Connecting;
-                    break;
-                case Connected:
-                    lastStatus = actualStatus;
-                    progressIndicator.setVisible(false);
-                    setStatusText("Connected to \"" + AppSettings.getServerAddress()+ "\"", Color.GREEN);
-                    actualStatus = ClientStatus.Connected;
-                    break;
-                case Updating:
-                    lastStatus = actualStatus;
-                    progressIndicator.setVisible(true);
-                    setStatusText("Getting job list from \"" + AppSettings.getServerAddress() + "\"", Color.GREEN);
-                    actualStatus = ClientStatus.Updating;
-                    break;
-                case Extracting:
-                    lastStatus = actualStatus;
-                    progressIndicator.setVisible(true);
-                    setStatusText("Extracting...", Color.GREEN);
-                    actualStatus = ClientStatus.Extracting;
-                    break;
-                case Downloading:
-                    lastStatus = actualStatus;
-                    progressIndicator.setVisible(true);
-                    setStatusText("Downloading in " + AppSettings.getSavePath(), Color.GREEN);
-                    actualStatus = ClientStatus.Downloading;
-                    break;
-                case Disconnected:
-                    lastStatus = actualStatus;
-                    progressIndicator.setVisible(true);
-                    setStatusText("Can't find Jenkins server on \"" + AppSettings.getServerAddress() + "\"", Color.RED);
-                    actualStatus = ClientStatus.Disconnected;
-                    break;
-                default:
-                    lastStatus = actualStatus;
-                    progressIndicator.setVisible(false);
-                    actualStatus = ClientStatus.Disconnected;
-                    break;
-            }
-        }
-        catch (Exception e)
-        {
-            System.out.println("(MainController) Error on change status: " + e);
-        }
-
-    }
-
-    private void setStatusText (String text, Color color)
+    private void setStatusText (String text)
     {
         try {
             Platform.runLater(
@@ -636,29 +575,6 @@ public class MainController
         System.out.println(formatForDateNow.format(date) + "/ Status of auto update:" + ": " + out);
 
         return out;
-    }
-
-    public void updateJobStatus (Job job)
-    {
-        Iterator iteratorListOfJobs = getJobsIterator(AppSettings.getServerAddress());
-
-        while ( iteratorListOfJobs.hasNext() ) {
-            Element element = (Element) iteratorListOfJobs.next();                  //берем следующую работу
-
-            String jobName = getJobNameFromElement(element);
-
-            if (jobName.equals(job.getJobName()))
-            {
-                int jobID = getJobIDFromElement(element);
-                Job.JobStatusListing status = getJobStatusFromServer(element);
-
-                job.setJobStatus(status);
-                job.setJobID(jobID);
-
-                //TODO: добавить функции для изменения состояния джобы, иконки состояния джобы, описания джобы, времени изменения состояния джобы, номера сбокри джобы
-                //job.changeJobStatusInCard(status, card.getJob().getLastChange(), jobID);
-            }
-        }
     }
 
     private String formationStringWithChangedJobs(String actualString, Job job)
