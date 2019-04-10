@@ -16,7 +16,6 @@ import javafx.scene.layout.VBox;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
-import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -49,19 +48,27 @@ public class Job extends Pane {
     private Label iconJobStatus;
     private Label jobStatusLabel;
     private String roundingForStatusIcon;
-    private Pane overlayPane;
 
-    //private final String bgColor = "#E3F2FD";
+
     private final String mainColor = "#0D47A1";
-    private final String backgroundColor = "#E3F2FD";
+    private final String cardBackgroundColor = "#E3F2FD";
+    private final String cardBorderColor = "#10A3E2";
+
     private final String errorColor = "#F30707";
     private final String inProcessColor = "#10A3E2";
+    private final String successColor = "#00BD35";
+    private final String neutralColor = "#BEC4C7";
+
+    private String currentCardColor;
+
     private final String darkTextColor = "#000000";
     private final String lightTextColor = "#CFD8DC";
+
     private final String font = "-fx-font-family: Roboto;";
     private final String rad = "5";
     private final String rounding = "-fx-border-radius: " + rad +", " + rad + " , " + rad + ", " +  rad + ";" +
             "-fx-background-radius:" + rad +", " + rad + " , " + rad + ", " +  rad + ";";
+
 
     private double CARD_WIDTH = 250;    //ШИРИНА
     private double CARD_HEIGHT = 170;   //ВЫСОТА
@@ -123,26 +130,13 @@ public class Job extends Pane {
 
     private void setViewParams()
     {
-        this.setPrefSize(CARD_WIDTH, CARD_HEIGHT);
-        this.setStyle("-fx-background-color: " + backgroundColor + ";" +
-                "-fx-border-color: " + inProcessColor + ";" +
-                rounding);
-        //TODO: при наведении мышки на карточку нужно подсвечивать её границы
+        configMainPane();
 
         rootVBox = new VBox();
-        jobNameLabel = new Label(jobName + " #" + jobID);   //надпись с именем джобы и номеров
-        stateHBox = new HBox(); //кружок состояния, тест состояния, избранное
-        dateLabel = new Label(lastChange); //время последнего изменения статуса джобы
-        descriptionText = new Label();   //надпись с описанием
+        rootVBox.setPadding(new Insets(1, 0,0, 0));
+
         separator_1 = new Separator();      //разделитель 1
         separator_2 = new Separator();      //разделитель 2
-        downloadPane = new StackPane();
-        downloadButton = new Button("Download"); //кнопка скачивания
-        progressBar = new ProgressBar();
-        errorText = new Label();
-
-        //TODO: сделать overlayPane прозрачной
-        overlayPane = new Pane();
 
         rootVBox.setSpacing(2); //отступы между элментами карточки
         rootVBox.setAlignment(Pos.CENTER);
@@ -153,14 +147,36 @@ public class Job extends Pane {
         configSeparators();
         configDownloadPane();
 
-
-        rootVBox.getChildren().addAll(jobNameLabel, stateHBox, dateLabel, separator_1, descriptionText, separator_2, downloadPane, overlayPane);
+        rootVBox.getChildren().addAll(jobNameLabel, stateHBox, dateLabel, separator_1, descriptionText, separator_2, downloadPane);
         this.getChildren().addAll(rootVBox);
     }
 
+    private void configMainPane()
+    {
+        this.setPrefSize(CARD_WIDTH, CARD_HEIGHT);
+        this.setStyle("-fx-background-color: " + cardBackgroundColor + ";" +
+                "-fx-border-color: " + currentCardColor + ";" +
+                rounding);
+
+        this.setOnMouseEntered((event -> {
+            this.setStyle("-fx-background-color: " + cardBackgroundColor + ";" +
+                    "-fx-border-color:" + currentCardColor + ";" +
+                    "-fx-effect: dropshadow(gaussian, " + currentCardColor + ", 10, 0.2, 2, 2);" +
+                    rounding);
+        }));
+        this.setOnMouseExited((event -> {
+            this.setStyle("-fx-background-color: " + cardBackgroundColor + ";" +
+                    "-fx-border-color: " + currentCardColor + ";" +
+                    rounding);
+        }));
+    }
 
     private void configJobNameInfo(){
-        jobNameLabel.setPrefSize(250, 36);
+        jobNameLabel = new Label();   //надпись с именем джобы и номеров
+        jobNameLabel.setText(jobName + " #" + jobID);
+        jobNameLabel.setPrefSize(CARD_WIDTH - 2, 36);
+        jobNameLabel.setPadding(new Insets(0, 0, 0, 0));
+
         jobNameLabel.setAlignment(Pos.CENTER);
         jobNameLabel.setStyle("-fx-text-fill: " + lightTextColor + ";" +
                 "-fx-background-color: " + mainColor + ";" +
@@ -170,11 +186,15 @@ public class Job extends Pane {
     }
 
     private void configJobStateInfo() {
+        stateHBox = new HBox(); //кружок состояния, тест состояния, избранное
+
         stateHBox.setPrefSize(250, 18);
         stateHBox.setMaxHeight(18);
         stateHBox.setSpacing(5);
         stateHBox.setPadding(new Insets(0, 0, 0, 5));
         stateHBox.setAlignment(Pos.CENTER_LEFT);
+
+        dateLabel = new Label(); //время последнего изменения статуса джобы
 
         dateLabel.setText(lastChange);
         dateLabel.setPrefSize(250, 18);
@@ -233,6 +253,8 @@ public class Job extends Pane {
     }
 
     private void configJobDescription() {
+        descriptionText = new Label();   //надпись с описанием
+
         descriptionText.setPrefSize(250, 36);
         descriptionText.setPadding(new Insets(0, 0, 0, 5));
         descriptionText.setStyle(font + "-fx-font-size: 14px;" +
@@ -251,6 +273,23 @@ public class Job extends Pane {
     }
 
     private void configDownloadPane() {
+        downloadPane = new StackPane();
+
+        configDownloadButton();
+        configProgressBar();
+        configErrorText();
+
+        downloadPane.setMaxSize(CARD_WIDTH - 6, 16);
+        downloadPane.setPadding(new Insets(0, 0, 0, 0));
+        downloadPane.setVisible(true);
+        downloadPane.setAlignment(Pos.CENTER);
+
+        downloadPane.getChildren().addAll(downloadButton, progressBar, errorText);
+    }
+
+    private void configDownloadButton()
+    {
+        downloadButton = new Button("Download"); //кнопка скачивания
         downloadButton.setPrefSize(CARD_WIDTH - 6, 16);
         downloadButton.setAlignment(Pos.CENTER);
         downloadButton.setStyle(font + "-fx-border-color: transparent;" +
@@ -262,7 +301,6 @@ public class Job extends Pane {
         downloadButton.setOnMouseClicked((event)->{
             startJobDownload();
         });
-
         downloadButton.setOnMousePressed((event -> {
             downloadButton.setStyle(font + "-fx-border-color: transparent;" +
                     "    -fx-background-color: " + mainColor + ";" +
@@ -278,8 +316,8 @@ public class Job extends Pane {
                     ";");
         }));
         downloadButton.setOnMouseEntered((event -> {
-            downloadButton.setStyle(font + "-fx-border-color: " + inProcessColor + ";" +
-                    "    -fx-background-color: " + inProcessColor + ";" +
+            downloadButton.setStyle(font + "-fx-border-color: " + cardBorderColor + ";" +
+                    "    -fx-background-color: " + cardBorderColor + ";" +
                     "    -fx-text-fill: " + darkTextColor + ";" +
                     "    -fx-effect: dropshadow( gaussian , rgba(0, 0, 0, 0), 0, 0 , 0 , 0 )" +
                     ";");
@@ -296,29 +334,25 @@ public class Job extends Pane {
             downloadButton.setVisible(true);
         else
             downloadButton.setVisible(false);
+    }
+    private void configProgressBar()
+    {
+        progressBar = new ProgressBar();
 
         progressBar.setVisible(false);
-        errorText.setVisible(false);
-
-        progressBar.getStylesheets().add("css/Main.css");
+        progressBar.getStylesheets().add("css/JobCard.css");
         progressBar.setPrefSize(CARD_WIDTH - 6, 16);
-
         progressBar.setProgress(0);
-
+    }
+    private void configErrorText()
+    {
+        errorText = new Label();
         errorText.setStyle(font + "-fx-border-color: transparent;" +
                 "    -fx-background-color: transparent;" +
                 "    -fx-text-fill: " + darkTextColor + ";" +
                 ";");
-
-        downloadPane.setMaxSize(CARD_WIDTH - 6, 16);
-        downloadPane.setPadding(new Insets(0, 0, 0, 0));
-        //downloadPane.setStyle("-fx-border-color: #000000");
-        downloadPane.setVisible(true);
-        downloadPane.setAlignment(Pos.CENTER);
-
-        downloadPane.getChildren().addAll(downloadButton, progressBar, errorText);
+        errorText.setVisible(false);
     }
-
 
 
 
@@ -360,9 +394,6 @@ public class Job extends Pane {
             }
             else {
                 writeToLog("Size = " + size);
-
-                while (downloadThread.isAlive())
-                    showErrorText("Unknown size");
             }
         }
         else {
@@ -390,27 +421,8 @@ public class Job extends Pane {
         );
     }
 
-    private void showDownloadButton()
-    {
-        downloadButton.setVisible(true);
-        progressBar.setVisible(false);
-        errorText.setVisible(false);
-    }
 
-    private void showProgressBar()
-    {
-        downloadButton.setVisible(false);
-        progressBar.setVisible(true);
-        errorText.setVisible(false);
-    }
 
-    private void showErrorText(String text)
-    {
-        downloadButton.setVisible(false);
-        progressBar.setVisible(false);
-        errorText.setVisible(true);
-        errorText.setText(text);
-    }
 
     public String getJobName() {
         return jobName;
@@ -433,10 +445,6 @@ public class Job extends Pane {
         return isFile;
     }
 
-    public String getLastChange() {
-        return lastChange;
-    }
-
     public Date getLastChangeDate()
     {
         if (!lastChange.equals("-"))
@@ -457,8 +465,14 @@ public class Job extends Pane {
             return null;
     }
 
+
+
     public void setVisibleName(String visibleName) {
         this.visibleName = visibleName;
+        Platform.runLater(() -> {
+            descriptionText.setText(visibleName);
+        });
+
     }
 
     public void setJobID(int jobID) {
@@ -484,6 +498,8 @@ public class Job extends Pane {
         AppSettings.changeSettingInConfig(jobName + "_time", this.lastChange);  //запись в конфиг времени последнего изменения
     }
 
+
+
     private void changeJobStatusOnCard(JobStatusListing jobStatus)
     {
         Platform.runLater(() -> {
@@ -491,50 +507,65 @@ public class Job extends Pane {
                 case Впроцессе:
                     jobStatusLabel.setText("В процессе");
                     iconJobStatus.setStyle("-fx-background-color: " + inProcessColor + ";" + roundingForStatusIcon);
+                    currentCardColor = inProcessColor;
+                    this.setStyle(this.getStyle() + "-fx-border-color: " + inProcessColor + ";");
                     break;
                 case Приостановлено:
                     jobStatusLabel.setText("Приостановленно");
-                    iconJobStatus.setStyle("-fx-background-color: " + darkTextColor + ";"  + roundingForStatusIcon);
+                    iconJobStatus.setStyle("-fx-background-color: " + neutralColor + ";"  + roundingForStatusIcon);
+                    currentCardColor = neutralColor;
+                    this.setStyle(this.getStyle() + "-fx-border-color: " + neutralColor + ";");
                     break;
                 case Провалилось:
                     jobStatusLabel.setText("Провалилось");
                     iconJobStatus.setStyle("-fx-background-color: " + errorColor + ";"  + roundingForStatusIcon);
+                    currentCardColor = errorColor;
+                    this.setStyle(this.getStyle() + "-fx-border-color: " + errorColor + ";");
                     break;
                 case Неизвестно:
                     jobStatusLabel.setText("неизвестно");
-                    iconJobStatus.setStyle("-fx-background-color: " + darkTextColor + ";"  + roundingForStatusIcon);
+                    iconJobStatus.setStyle("-fx-background-color: " + neutralColor + ";"  + roundingForStatusIcon);
+                    currentCardColor = neutralColor;
+                    this.setStyle(this.getStyle() + "-fx-border-color: " + neutralColor + ";");
                     break;
                 case Прервано:
                     jobStatusLabel.setText("Прервано");
-                    iconJobStatus.setStyle("-fx-background-color: " + darkTextColor + ";"  + roundingForStatusIcon);
+                    iconJobStatus.setStyle("-fx-background-color: " + neutralColor + ";"  + roundingForStatusIcon);
+                    currentCardColor = neutralColor;
+                    this.setStyle(this.getStyle() + "-fx-border-color: " + neutralColor + ";");
                     break;
                 case Успешно:
                     jobStatusLabel.setText("Успешно");
-                    iconJobStatus.setStyle("-fx-background-color: " + mainColor + ";"  + roundingForStatusIcon);
+                    iconJobStatus.setStyle("-fx-background-color: " + successColor + ";"  + roundingForStatusIcon);
+                    currentCardColor = successColor;
+                    this.setStyle(this.getStyle() + "-fx-border-color: " + successColor + ";");
                     break;
                 case built:
-                    jobStatusLabel.setText("build");
-                    iconJobStatus.setStyle("-fx-background-color: " + darkTextColor + ";"  + roundingForStatusIcon);
+                    jobStatusLabel.setText("Not build");
+                    iconJobStatus.setStyle("-fx-background-color: " + neutralColor + ";"  + roundingForStatusIcon);
+                    this.setStyle(this.getStyle() + "-fx-border-color: " + neutralColor + ";");
                     break;
                 case Ошибка:
                     jobStatusLabel.setText("Ошибка");
                     iconJobStatus.setStyle("-fx-background-color: " + errorColor + ";"  + roundingForStatusIcon);
+                    currentCardColor = errorColor;
+                    this.setStyle(this.getStyle() + "-fx-border-color: " + errorColor + ";");
                     break;
                 default:
                     jobStatusLabel.setText("Unknown job status!");
                     iconJobStatus.setStyle("-fx-background-color: " + errorColor + ";"  + roundingForStatusIcon);
+                    currentCardColor = neutralColor;
+                    this.setStyle(this.getStyle() + "-fx-border-color: " + errorColor + ";");
                     break;
             }
         });
     }
-
     private void changeJobIDOnCard(int id)
     {
         Platform.runLater(() -> {
             jobNameLabel.setText(jobName + " #" + id);
         });
     }
-
     private void changeJobTimeOnCard()
     {
         Platform.runLater(() -> {
@@ -559,24 +590,6 @@ public class Job extends Pane {
         };
 
         return download;
-    }
-
-    private void trayMessage (String text)
-    {
-        Main main = new Main();
-        Platform.runLater(
-                () -> {
-                    try {
-                        String caption = "Jenkins Downloader";  //заголовок сообщения
-                        if (AppSettings.isShowNotifications())
-                            main.getTrayIcon().displayMessage(caption, text, TrayIcon.MessageType.INFO); //метод отображения сообщения в трее
-                    }
-                    catch (Exception e)
-                    {
-                        System.out.println("(Job) Can't display tray message: " + e);
-                    }
-                }
-        );
     }
 
     private void startDownload(File file)
@@ -615,5 +628,39 @@ public class Job extends Pane {
         catch(ZipException zipexception) {
             zipexception.printStackTrace();
         }
+    }
+
+
+
+    private void showDownloadButton()
+    {
+        Platform.runLater(() -> {
+            downloadButton.setVisible(true);
+            progressBar.setVisible(false);
+            errorText.setVisible(false);
+        });
+
+    }
+
+    private void showProgressBar()
+    {
+        Platform.runLater(() -> {
+            downloadButton.setVisible(false);
+            progressBar.setVisible(true);
+            errorText.setVisible(false);
+        });
+
+
+    }
+
+    private void showErrorText(String text)
+    {
+        Platform.runLater(() -> {
+            downloadButton.setVisible(false);
+            progressBar.setVisible(false);
+            errorText.setVisible(true);
+            errorText.setText(text);
+        });
+
     }
 }

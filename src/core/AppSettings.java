@@ -7,7 +7,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Properties;
-
+//TODO: сделать сортировку конфиг файла.
 public class AppSettings
 {
     private static final String FILE_CONFIG_NAME = "jenkins.conf";
@@ -255,6 +255,7 @@ public class AppSettings
         {
             System.out.println("(AppSettings) (changeSettingInConfig) Error: " + e);
         }
+
     }
 
     private static void createConfigFile(File file)    //если конфигурационный файл не найден, то создаем новый с настрйоками по умолчанию
@@ -328,7 +329,6 @@ public class AppSettings
                 break;
         }
     }
-
 
 //-----------------------------------
     public static String getSavePath() {

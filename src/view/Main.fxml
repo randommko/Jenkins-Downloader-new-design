@@ -11,32 +11,32 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="rootPane" prefHeight="800.0" prefWidth="810.0" styleClass="anchorPane" stylesheets="@../css/myStyle.css" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.MainController">
+<AnchorPane fx:id="rootPane" prefHeight="800.0" prefWidth="810.0" styleClass="anchorPane" stylesheets="@../css/Main.css" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.MainController">
    <children>
-      <VBox stylesheets="@../css/myStyle.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox stylesheets="@../css/Main.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <HBox alignment="CENTER_LEFT" minHeight="50.0" prefHeight="50.0" spacing="10.0" styleClass="hBox" stylesheets="@../css/myStyle.css">
+            <HBox alignment="CENTER_LEFT" minHeight="50.0" prefHeight="50.0" spacing="10.0" styleClass="hBox" stylesheets="@../css/Main.css">
                <children>
-                  <Button depthTest="DISABLE" mnemonicParsing="false" onAction="#onSettingsClick" pickOnBounds="false" prefHeight="25.0" prefWidth="75.0" stylesheets="@../css/myStyle.css" text="Settings">
+                  <Button depthTest="DISABLE" mnemonicParsing="false" onAction="#onSettingsClick" pickOnBounds="false" prefHeight="25.0" prefWidth="75.0" stylesheets="@../css/Main.css" text="Settings">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button mnemonicParsing="false" onAction="#connectToServer" prefHeight="25.0" prefWidth="75.0" stylesheets="@../css/myStyle.css" text="Refresh">
+                  <Button mnemonicParsing="false" onAction="#connectToServer" prefHeight="25.0" prefWidth="75.0" stylesheets="@../css/Main.css" text="Refresh">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button mnemonicParsing="false" onAction="#helpButtonClick" prefHeight="25.0" prefWidth="75.0" stylesheets="@../css/myStyle.css" text="Help">
+                  <Button mnemonicParsing="false" onAction="#helpButtonClick" prefHeight="25.0" prefWidth="75.0" stylesheets="@../css/Main.css" text="Help">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Label fx:id="statusLabel" prefHeight="25.0" prefWidth="440.0" styleClass="text-light" stylesheets="@../css/myStyle.css" text="Status:">
+                  <Label fx:id="statusLabel" prefHeight="25.0" prefWidth="440.0" styleClass="text-light" stylesheets="@../css/Main.css" text="Status:">
                      <font>
                         <Font size="14.0" />
                      </font></Label>
-                  <ProgressIndicator fx:id="progressIndicator" prefHeight="28.0" prefWidth="28.0" styleClass="progress-bar" stylesheets="@../css/myStyle.css">
+                  <ProgressIndicator fx:id="progressIndicator" prefHeight="28.0" prefWidth="28.0" styleClass="progress-bar" stylesheets="@../css/Main.css">
                      <HBox.margin>
                         <Insets left="50.0" />
                      </HBox.margin>
@@ -49,11 +49,11 @@
                   <Insets left="10.0" />
                </padding>
             </HBox>
-            <AnchorPane prefHeight="751.0" styleClass="anchorPane" stylesheets="@../css/myStyle.css">
+            <AnchorPane prefHeight="751.0" styleClass="anchorPane" stylesheets="@../css/Main.css">
                <children>
-                  <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" layoutX="10.0" layoutY="35.0" styleClass="scrollPane" stylesheets="@../css/myStyle.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="5.0">
+                  <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" layoutX="10.0" layoutY="35.0" styleClass="scrollPane" stylesheets="@../css/Main.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="5.0">
                      <content>
-                        <FlowPane fx:id="botFlowPane" hgap="10.0" styleClass="flowPane" stylesheets="@../css/myStyle.css" vgap="10.0" />
+                        <FlowPane fx:id="botFlowPane" hgap="10.0" styleClass="flowPane" stylesheets="@../css/Main.css" vgap="10.0" />
                      </content>
                   </ScrollPane>
                </children></AnchorPane>

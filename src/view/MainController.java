@@ -221,7 +221,7 @@ public class MainController
         botFlowPane.setVgap(10);
 
 
-        rootPane.getStylesheets().add(this.getClass().getResource("../css/myStyle.css").toExternalForm());
+        rootPane.getStylesheets().add(this.getClass().getResource("../css/Main.css").toExternalForm());
 
         main = new Main();
     }

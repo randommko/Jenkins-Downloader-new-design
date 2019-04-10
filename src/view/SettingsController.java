@@ -75,6 +75,7 @@ public class SettingsController {
         AppSettings.setAutoUpdate(autoUpdateCheckBox.isSelected());
 
         Stage mainStage = getSettingsStage();
+
         mainStage.close();
     }
 
