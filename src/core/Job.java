@@ -26,6 +26,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import static core.AppSettings.findTagInConfigFile;
 import static core.AppSettings.findTimeInConfigFile;
@@ -340,6 +341,7 @@ public class Job extends Pane {
         progressBar = new ProgressBar();
 
         progressBar.setVisible(false);
+        //TODO: сделать прогресс бар красивым!
         progressBar.getStylesheets().add("css/JobCard.css");
         progressBar.setPrefSize(CARD_WIDTH - 6, 16);
         progressBar.setProgress(0);
@@ -385,7 +387,7 @@ public class Job extends Pane {
                         progressBar.setProgress(file.length() / size);
                         //writeToLog("progress: " + file.length() / size);
                     }
-                    showDownloadButton();
+                    //showDownloadButton();
                 };
 
                 showProgressBar();
@@ -394,6 +396,12 @@ public class Job extends Pane {
             }
             else {
                 writeToLog("Size = " + size);
+                showErrorText("Unknown job size");
+//                Platform.runLater( () -> {
+//                    while (downloadThread.isAlive())
+//                        sleep(100);
+//                    showDownloadButton();
+//                });
             }
         }
         else {
@@ -587,7 +595,9 @@ public class Job extends Pane {
 
             startDownload(file);
             writeToLog("Download complete: " + jobName + " (#" + jobID + ")");
+             showDownloadButton();
         };
+
 
         return download;
     }
@@ -661,6 +671,18 @@ public class Job extends Pane {
             errorText.setVisible(true);
             errorText.setText(text);
         });
+    }
 
+
+    private void sleep(int timeout)
+    {
+        try
+        {
+            TimeUnit.SECONDS.sleep(timeout);
+        }
+        catch (Exception err)
+        {
+            System.out.println("(MainController) (sleep) Can't call sleep method: " + err);
+        }
     }
 }

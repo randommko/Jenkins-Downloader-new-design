@@ -12,27 +12,19 @@
 
 .progress-bar {
     -fx-background-color: #E3F2FD;
-    -fx-background-radius: 4, 4, 4, 4;
-    -fx-border-radius: 4, 4, 4, 4;
-    -fx-border-color: #E3F2FD;
+    -fx-background-radius: 0, 0, 0, 0;
+    -fx-border-radius: 0, 0, 0, 0;
+    -fx-border-color: transparent;  /* цвет рамки вокруг всего бара */
+
 
 }
 
-.progress-bar .track{
-    -fx-background-color: #0D47A1;  /* #E3F2FD */
-    -fx-border-color: #0D47A1;
-    -fx-background-insets: 20;
-    -fx-background-radius: 4, 4, 4, 4;
+.progress-bar .track {
+    -fx-background-color: #E3F2FD;
+    -fx-background-radius: 0, 0, 0, 0;
 }
 
 .progress-bar .bar {
-    -fx-fill-color: #0D47A1;
-    -fx-background-insets: 0, 0, 0, 0;
-    -fx-background-radius: 4, 4, 4, 4;
-    -fx-border-radius: 4, 4, 4, 4;
+    -fx-background-color: #0D47A1;
+    -fx-background-radius: 0, 0, 0, 0;
 }
-
-/*
--fx-border-radius: 5, 5, 5, 5;
-    -fx-background-radius: 5, 5, 5, 5;
-    */
