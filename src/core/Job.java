@@ -41,6 +41,7 @@ public class Job extends Pane {
     private HBox stateHBox;
     private Label dateLabel;
     private Label descriptionText;
+    private Button favoriteIconButton;
     private Separator separator_1, separator_2;
     private StackPane downloadPane;
     private Label errorText;
@@ -63,7 +64,7 @@ public class Job extends Pane {
     private String currentCardColor;
 
     private final String darkTextColor = "#000000";
-    private final String lightTextColor = "#CFD8DC";
+    private final String lightTextColor = "#E3E9EC";
 
     private final String font = "-fx-font-family: Roboto;";
     private final String rad = "5";
@@ -72,7 +73,7 @@ public class Job extends Pane {
 
 
     private double CARD_WIDTH = 250;    //ШИРИНА
-    private double CARD_HEIGHT = 170;   //ВЫСОТА
+    private double CARD_HEIGHT = 175;   //ВЫСОТА
 
     private String visibleName; //отображемое имя (необязательно)
     private int jobID;          //номер последней сборки
@@ -134,7 +135,7 @@ public class Job extends Pane {
         configMainPane();
 
         rootVBox = new VBox();
-        rootVBox.setPadding(new Insets(1, 0,0, 0));
+        rootVBox.setPadding(new Insets(1, 0,0, 0)); //что бы было видно рамку на верхней грани карточки
 
         separator_1 = new Separator();      //разделитель 1
         separator_2 = new Separator();      //разделитель 2
@@ -162,7 +163,7 @@ public class Job extends Pane {
         this.setOnMouseEntered((event -> {
             this.setStyle("-fx-background-color: " + cardBackgroundColor + ";" +
                     "-fx-border-color:" + currentCardColor + ";" +
-                    "-fx-effect: dropshadow(gaussian, " + currentCardColor + ", 10, 0.2, 2, 2);" +
+                    "-fx-effect: dropshadow(gaussian, " + currentCardColor + ", 5, 0.1, 1, 1);" +
                     rounding);
         }));
         this.setOnMouseExited((event -> {
@@ -203,11 +204,11 @@ public class Job extends Pane {
         dateLabel.setPadding(new Insets(0, 0, 0, 5));
         dateLabel.setStyle(font +
                 "-fx-font-size: 14px;" +
-                "-f-text-fill:" + darkTextColor + ";");
+                "-fx-text-fill:" + darkTextColor + ";");
 
         jobStatusLabel = new Label(jobStatus.toString()); //статус дждобы текстом
         jobStatusLabel.setStyle(font + "-fx-font-size: 14px;" +
-                "-f-text-fill:" + darkTextColor + ";");
+                "-fx-text-fill:" + darkTextColor + ";");
 
         iconJobStatus = new Label();  //статус джобы цветом
         iconJobStatus.setPrefSize(16, 16);
@@ -217,12 +218,17 @@ public class Job extends Pane {
                 "-fx-background-radius: 8, 8, 8, 8;";
 
         changeJobStatusOnCard(jobStatus);
+        configFavoriteButton();
 
-        Button favoriteIconButton = new Button();   //икнока звездочки (любимая джоба)
+
+        stateHBox.getChildren().addAll(iconJobStatus, jobStatusLabel, favoriteIconButton);
+    }
+
+    private void configFavoriteButton()
+    {
+        favoriteIconButton = new Button();   //икнока звездочки (любимая джоба)
         favoriteIconButton.setStyle("-fx-border-color: transparent;" +
                 "                    -fx-background-color: transparent;" +
-                "                    -fx-text-fill:" + darkTextColor +";" +
-                "                    -fx-effect: dropshadow( gaussian , rgba(0, 0, 0, 0), 0, 0 , 0 , 0 ) " +
                 "                ;");
 
         Image favoriteIconImage = new Image(favoriteIconLoc);
@@ -250,7 +256,6 @@ public class Job extends Pane {
         });
 
         //TODO: добавить использование "любимых" работ
-        stateHBox.getChildren().addAll(iconJobStatus, jobStatusLabel, favoriteIconButton);
     }
 
     private void configJobDescription() {
@@ -259,7 +264,7 @@ public class Job extends Pane {
         descriptionText.setPrefSize(250, 36);
         descriptionText.setPadding(new Insets(0, 0, 0, 5));
         descriptionText.setStyle(font + "-fx-font-size: 14px;" +
-                "-f-text-fill:" + darkTextColor + ";");
+                "-fx-text-fill:" + darkTextColor + ";");
         descriptionText.setText(visibleName);
     }
 
@@ -291,43 +296,59 @@ public class Job extends Pane {
     private void configDownloadButton()
     {
         downloadButton = new Button("Download"); //кнопка скачивания
-        downloadButton.setPrefSize(CARD_WIDTH - 6, 16);
+        downloadButton.setPrefSize(CARD_WIDTH - 6, 14);
         downloadButton.setAlignment(Pos.CENTER);
-        downloadButton.setStyle(font + "-fx-border-color: transparent;" +
+        int borderWidth = 2;
+        downloadButton.setStyle(font + " -fx-border-color: transparent;" +
+                "    -fx-border-width: " + borderWidth + ", " + borderWidth + ", " + borderWidth + ", " + borderWidth + ";" +
+                "    -fx-border-radius: 5, 5, 5, 5;" +
                 "    -fx-background-color: transparent;" +
+                "    -fx-background-radius: 5, 5, 5, 5;" +
                 "    -fx-text-fill: " + darkTextColor + ";" +
-                "    -fx-effect: dropshadow( gaussian , rgba(0, 0, 0, 0), 0, 0 , 0 , 0 )" +
+                /*"    -fx-effect: dropshadow( gaussian , #000000, 0, 0 , 0, 0)" +*/
                 ";");
 
-        downloadButton.setOnMouseClicked((event)->{
+        downloadButton.setOnMouseClicked((event)->{     //клик по кнопке
             startJobDownload();
         });
-        downloadButton.setOnMousePressed((event -> {
-            downloadButton.setStyle(font + "-fx-border-color: transparent;" +
+        downloadButton.setOnMousePressed((event -> {    //кнопка нажата
+            downloadButton.setStyle(font + " -fx-border-color: " + mainColor + ";" +
+                    "    -fx-border-width: " + borderWidth + ", " + borderWidth + ", " + borderWidth + ", " + borderWidth + ";" +
+                    "    -fx-border-radius: 5, 5, 5, 5;" +
+                    "    -fx-background-radius: 5, 5, 5, 5;" +
+                    "    -fx-background-color: #153A74;" +    //сделать цвет кнопки темнее на пару тонов
+                    "    -fx-text-fill: " + lightTextColor + ";" +
+                    /*"    -fx-effect: dropshadow( gaussian , #000000, 0, 0, 0, 0)" +*/
+                    ";");
+        }));
+        downloadButton.setOnMouseReleased((event -> {   //кнопка отпущена
+            downloadButton.setStyle(font + " -fx-border-color: transparent;" +
+                    "    -fx-border-width: " + borderWidth + ", " + borderWidth + ", " + borderWidth + ", " + borderWidth + ";" +
+                    "    -fx-border-radius: 5, 5, 5, 5;" +
+                    "    -fx-background-radius: 5, 5, 5, 5;" +
                     "    -fx-background-color: " + mainColor + ";" +
                     "    -fx-text-fill: " + lightTextColor + ";" +
-                    "    -fx-effect: dropshadow( gaussian , rgba(0, 0, 0, 0), 0, 0 , 0 , 0 )" +
+                    /*"    -fx-effect: dropshadow( gaussian , #000000, 0, 0, 0, 0)" +*/
                     ";");
         }));
-        downloadButton.setOnMouseReleased((event -> {
-            downloadButton.setStyle(font + "-fx-border-color: " + inProcessColor + ";" +
-                    "    -fx-background-color: " + inProcessColor + ";" +
-                    "    -fx-text-fill: " + darkTextColor + ";" +
-                    "    -fx-effect: dropshadow( gaussian , rgba(0, 0, 0, 0), 0, 0 , 0 , 0 )" +
+        downloadButton.setOnMouseEntered((event -> {        //курсор попал на кнопку
+            downloadButton.setStyle(font + " -fx-border-color: " + mainColor + ";" +
+                    "    -fx-border-width: " + borderWidth + ", " + borderWidth + ", " + borderWidth + ", " + borderWidth + ";" +
+                    "    -fx-border-radius: 5, 5, 5, 5;" +
+                    "    -fx-background-radius: 5, 5, 5, 5;" +
+                    "    -fx-background-color: " + mainColor + ";" +
+                    "    -fx-text-fill: " + lightTextColor + ";" +
+                    /*"    -fx-effect: dropshadow( gaussian, #000000, 0, 0, 0, 0)" +*/
                     ";");
         }));
-        downloadButton.setOnMouseEntered((event -> {
-            downloadButton.setStyle(font + "-fx-border-color: " + cardBorderColor + ";" +
-                    "    -fx-background-color: " + cardBorderColor + ";" +
-                    "    -fx-text-fill: " + darkTextColor + ";" +
-                    "    -fx-effect: dropshadow( gaussian , rgba(0, 0, 0, 0), 0, 0 , 0 , 0 )" +
-                    ";");
-        }));
-        downloadButton.setOnMouseExited((event -> {
-            downloadButton.setStyle(font + "-fx-border-color: transparent;" +
+        downloadButton.setOnMouseExited((event -> {     //курсор ушел с кнопки
+            downloadButton.setStyle(font + " -fx-border-color: transparent;" +
+                    "    -fx-border-width: " + borderWidth + ", " + borderWidth + ", " + borderWidth + ", " + borderWidth + ";" +
+                    "    -fx-border-radius: 5, 5, 5, 5;" +
+                    "    -fx-background-radius: 5, 5, 5, 5;" +
                     "    -fx-background-color: transparent;" +
                     "    -fx-text-fill: " + darkTextColor + ";" +
-                    "    -fx-effect: dropshadow( gaussian , rgba(0, 0, 0, 0), 0, 0 , 0 , 0 )" +
+                    /*"    -fx-effect: dropshadow( gaussian, #000000, 0, 0, 0, 0)" +*/
                     ";");
         }));
 
@@ -355,6 +376,7 @@ public class Job extends Pane {
                 ";");
         errorText.setVisible(false);
     }
+
 
 
 
@@ -387,7 +409,6 @@ public class Job extends Pane {
                         progressBar.setProgress(file.length() / size);
                         //writeToLog("progress: " + file.length() / size);
                     }
-                    //showDownloadButton();
                 };
 
                 showProgressBar();
@@ -396,12 +417,7 @@ public class Job extends Pane {
             }
             else {
                 writeToLog("Size = " + size);
-                showErrorText("Unknown job size");
-//                Platform.runLater( () -> {
-//                    while (downloadThread.isAlive())
-//                        sleep(100);
-//                    showDownloadButton();
-//                });
+                showErrorText("Job downloading...");
             }
         }
         else {
