@@ -2,16 +2,26 @@ package view;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class HelpController {
 
     @FXML
     private TextArea helpTextArea;
+    @FXML
+    private AnchorPane rootPane;
+    @FXML
+    private VBox vBox;
 
     @FXML
     private  void initialize()
     {
+        rootPane.setStyle("-fx-border-color: #0D47A1;" +
+                "-fx-border-width: 2px");
+        vBox.setStyle("-fx-fill-color: #0D47A1;");
+
         helpTextArea.setEditable(false);
         helpTextArea.appendText("Jenkins downloader\n");
         helpTextArea.appendText("Основные возможности:\n");

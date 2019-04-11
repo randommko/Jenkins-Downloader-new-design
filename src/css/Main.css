@@ -80,9 +80,11 @@
 }
 
 .scroll-bar:horizontal {
-    -fx-background-color: #10A3E2;
-    -fx-font-size: 14;
-    -fx-pref-height: 16; /*высота*/
+        -fx-background-color: #FFFFFF;  /*фон в самом низу*/
+        -fx-font-size: 14;
+        -fx-pref-width: 16; /*ширина*/
+        -fx-border-width: 0px;
+        -fx-bored-color: #E3F2FD;
     /*-fx-padding: 3;*/
 }
 
@@ -104,7 +106,7 @@
 .scroll-bar:horizontal .decrement-button {
     -fx-background-color :#0D47A1;
     -fx-background-radius : 0.0em;
-    -fx-padding :0.0 0.0 10.0 0.0;
+    -fx-padding :0.0 0.0 0.0 0.0;
 
 }
 
@@ -165,9 +167,9 @@
 .text-area {
     -fx-font-family: "Roboto";
     -fx-font-size: 14px;
-    -fx-border-color: #0D47A1;
-    -fx-border-radius: 5, 5, 5, 5;
-    -fx-background-radius: 5, 5, 5, 5;
+    -fx-border-color: transparent;
+    /*-fx-border-radius: 5, 5, 5, 5;
+    -fx-background-radius: 5, 5, 5, 5;*/
     /*-fx-text-weight: regular;*/
     /*-fx-font-family: "Roboto";*/
     /*-fx-opacity: 1;*/

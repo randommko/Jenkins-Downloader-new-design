@@ -266,8 +266,6 @@ public class Job extends Pane {
                 favoriteIconButton.setGraphic(new ImageView(unfavoriteIconImage));
             }
         });
-
-        //TODO: добавить использование "любимых" работ
     }
 
     private void configJobDescription() {

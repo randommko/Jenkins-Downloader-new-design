@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -28,14 +29,21 @@ public class SettingsController {
     @FXML
     private CheckBox showNotificationsCheckBox, showAllJobsCheckBox, autoUpdateCheckBox;
 
+    @FXML
+    private AnchorPane rootPane;
+
     private static Stage tagSettingsStage;
     private static final String settingsImageURL = "image/settings(small).png";
     private static final int TAG_SCENE_WIDTH = 800;
     private static final int TAG_SCENE_HEIGHT = 400;
 
+
+
     @FXML
     private  void initialize()
     {
+        rootPane.setStyle("-fx-border-color: #0D47A1;" +
+                "-fx-border-width: 2px");
         loadConfigFile();
 
         setServerAddress(AppSettings.getServerAddress());

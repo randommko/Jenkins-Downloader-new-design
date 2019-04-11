@@ -3,11 +3,14 @@ package core;
 import javafx.application.Application;
 
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import javax.imageio.ImageIO;
 
@@ -37,13 +40,34 @@ public class Main extends Application
     @Override
     public void start(Stage primaryStage)
     {
-        //TODO: сделать окно в стиле приложения
         try
         {
             stage = primaryStage;
+            primaryStage.initStyle(StageStyle.TRANSPARENT);
+
+
             root = FXMLLoader.load(getClass().getClassLoader().getResource("view/Main.fxml"));
 
             scene = new Scene(root, SCENE_WIDTH, SCENE_HEIGHT);
+
+            class Delta { double x, y; }
+            final Delta dragDelta = new Delta();
+
+            scene.setOnMousePressed(new EventHandler<MouseEvent>() {
+                @Override public void handle(MouseEvent mouseEvent) {
+                    // record a delta distance for the drag and drop operation.
+                    dragDelta.x = stage.getX() - mouseEvent.getScreenX();
+                    dragDelta.y = stage.getY() - mouseEvent.getScreenY();
+                }
+            });
+
+            scene.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    stage.setX(mouseEvent.getScreenX() + dragDelta.x);
+                    stage.setY(mouseEvent.getScreenY() + dragDelta.y);
+                }});
+
 
             primaryStage.setTitle("Jenkins downloader");
 

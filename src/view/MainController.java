@@ -7,6 +7,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
@@ -18,6 +19,7 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.stage.Window;
@@ -197,6 +199,25 @@ public class MainController
 
             settingsStage.setResizable(false);
 
+            settingsStage.initStyle(StageStyle.TRANSPARENT);
+            class Delta { double x, y; }
+            final Delta dragDelta = new Delta();
+
+            settingsScene.setOnMousePressed(new EventHandler<MouseEvent>() {
+                @Override public void handle(MouseEvent mouseEvent) {
+                    // record a delta distance for the drag and drop operation.
+                    dragDelta.x = settingsStage.getX() - mouseEvent.getScreenX();
+                    dragDelta.y = settingsStage.getY() - mouseEvent.getScreenY();
+                }
+            });
+
+            settingsScene.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    settingsStage.setX(mouseEvent.getScreenX() + dragDelta.x);
+                    settingsStage.setY(mouseEvent.getScreenY() + dragDelta.y);
+                }});
+
             settingsStage.show();
         }
         catch (Exception e)
@@ -223,6 +244,25 @@ public class MainController
             helpStage.setScene(helpScene);
 
             helpStage.setResizable(false);
+
+            helpStage.initStyle(StageStyle.TRANSPARENT);
+            class Delta { double x, y; }
+            final Delta dragDelta = new Delta();
+
+            helpScene.setOnMousePressed(new EventHandler<MouseEvent>() {
+                @Override public void handle(MouseEvent mouseEvent) {
+                    // record a delta distance for the drag and drop operation.
+                    dragDelta.x = helpStage.getX() - mouseEvent.getScreenX();
+                    dragDelta.y = helpStage.getY() - mouseEvent.getScreenY();
+                }
+            });
+
+            helpScene.setOnMouseDragged(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    helpStage.setX(mouseEvent.getScreenX() + dragDelta.x);
+                    helpStage.setY(mouseEvent.getScreenY() + dragDelta.y);
+                }});
 
             helpStage.show();
         }
@@ -266,13 +306,8 @@ public class MainController
         favoriteFlowPane.setOrientation(Orientation.HORIZONTAL);
         favoriteFlowPane.setHgap(10);
         favoriteFlowPane.setVgap(10);
-        //favoriteFlowPane.setPrefSize(WIDTH - 35 ,0);
 
-        //TODO: сделать разделитель синего цвета
         cardsSeparator.setPrefSize(WIDTH ,1);
-        /*cardsSeparator.setStyle("-fx-border: 1, 0, 0, 0; " +
-                "-fx-border-color: " + mainColor + ";" +
-                "-fx-fill-color: " + mainColor + ";");*/
 
         botFlowPane.setPrefSize(WIDTH - 35, jobsAnchorPane.getHeight() - favoriteFlowPane.getHeight());
         botFlowPane.setStyle("-fx-background-color: #FFFFFF;");
@@ -280,7 +315,6 @@ public class MainController
         botFlowPane.setHgap(10);
         botFlowPane.setVgap(10);
         botFlowPane.setMaxSize(WIDTH - 35, jobsAnchorPane.getHeight() - favoriteFlowPane.getHeight());
-
 
         rootPane.getStylesheets().add(this.getClass().getResource("../css/Main.css").toExternalForm());
 
