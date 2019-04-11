@@ -114,7 +114,6 @@ public class MainController
         favoriteFlowPane.getChildren().clear();
 
         favoriteFlowPane.setPrefSize(WIDTH - 35 ,0);
-        //TODO: изменить формулу ниже
         botFlowPane.setPrefSize(WIDTH - 35, jobsAnchorPane.getHeight() - favoriteFlowPane.getHeight());
 
         Runnable runnableGetJobList = () -> {
@@ -245,7 +244,6 @@ public class MainController
 
     private void initWindow()
     {
-
         //WIDTH - ширина
         //HEIGHT - высота
         rootPane.setMaxSize(WIDTH, HEIGHT);
@@ -253,19 +251,8 @@ public class MainController
         jobsAnchorPane.setStyle("-fx-fill-color: #FFFFFF;");
         mainVBox.setStyle("-fx-fill-color: #FFFFFF;");
 
-//        topBarHBox.setPrefSize(WIDTH, 50);
-//
-//        vBoxWithCards.setPrefSize(WIDTH, HEIGHT - topBarHBox.getHeight());
-//        //vBoxWithCards.setVgrow(scrollPane, Priority.ALWAYS);
-//
-//        jobsAnchorPane.setMinSize(WIDTH, HEIGHT - topBarHBox.getHeight());
-//        jobsAnchorPane.setMaxSize(WIDTH, HEIGHT - topBarHBox.getHeight());
-//
-//        scrollPane.setPrefSize(WIDTH - 20, jobsAnchorPane.getHeight());
-//        scrollPane.setMinSize(WIDTH - 20, jobsAnchorPane.getHeight());
         scrollPane.setStyle("-fx-fill-color: #FFFFFF;");
 
-        //scrollPane.setVmax(jobsAnchorPane.getHeight());
         scrollPane.viewportBoundsProperty().addListener(new ChangeListener<Bounds>() {
             @Override
             public void changed(ObservableValue<? extends Bounds> ov, Bounds oldBounds, Bounds bounds) {
@@ -282,10 +269,10 @@ public class MainController
         //favoriteFlowPane.setPrefSize(WIDTH - 35 ,0);
 
         //TODO: сделать разделитель синего цвета
-        cardsSeparator.setPrefSize(WIDTH - 42 ,1);
-        cardsSeparator.setStyle("-fx-border: 1, 0, 0, 0; " +
+        cardsSeparator.setPrefSize(WIDTH ,1);
+        /*cardsSeparator.setStyle("-fx-border: 1, 0, 0, 0; " +
                 "-fx-border-color: " + mainColor + ";" +
-                "-fx-fill-color: " + mainColor + ";");
+                "-fx-fill-color: " + mainColor + ";");*/
 
         botFlowPane.setPrefSize(WIDTH - 35, jobsAnchorPane.getHeight() - favoriteFlowPane.getHeight());
         botFlowPane.setStyle("-fx-background-color: #FFFFFF;");

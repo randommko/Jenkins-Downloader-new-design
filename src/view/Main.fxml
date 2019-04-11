@@ -57,7 +57,7 @@
                         <VBox fx:id="vBoxWithCards" prefHeight="744.0" spacing="10.0">
                            <children>
                               <FlowPane fx:id="favoriteFlowPane" hgap="10.0" prefHeight="180.0" prefWidth="800.0" styleClass="flowPane" stylesheets="@../css/Main.css" vgap="10.0" />
-                              <Separator fx:id="cardsSeparator" maxWidth="-Infinity" opacity="0.5" prefWidth="790.0" stylesheets="@../css/Main.css" VBox.vgrow="SOMETIMES">
+                              <Separator fx:id="cardsSeparator" maxWidth="-Infinity" stylesheets="@../css/Main.css" VBox.vgrow="SOMETIMES">
                                  <opaqueInsets>
                                     <Insets />
                                  </opaqueInsets>

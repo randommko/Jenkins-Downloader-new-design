@@ -1,11 +1,15 @@
 /*
-    --main-bg-color:      #E3F2FD;
-    --main-color:         #0D47A1;
-    --second-color:       #E3F2FD;
-    --error-color:        #D63908;
-    --in-process-color:   #10A3E2;
-    --dark-text-color:    #000000;
-    --light-text-color:   #CFD8DC;
+    mainColor = "#0D47A1";
+    cardBackgroundColor = "#E3F2FD";
+    cardBorderColor = "#10A3E2";
+
+    errorColor = "#F30707";
+    inProcessColor = "#10A3E2";
+    successColor = "#00BD35";
+    neutralColor = "#BEC4C7";
+
+    darkTextColor = "#000000";
+    lightTextColor = "#E3E9EC";
 */
 
 
@@ -140,9 +144,14 @@
     /*-fx-opacity: 1;*/
 }
 
-.separator {
-    /*-fx-fill-color: transparent;*/
-    /*-fx-border-color: #000000;*/
+.separator *.line {
+    /*-fx-fill-color: transparent;
+    -fx-border-color: #000000;
+    -fx-border-style: solid;*/
+    -fx-border-color: #153A74;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-style: solid;
+    -fx-opacity: 0.2;
 }
 
 .checkbox {

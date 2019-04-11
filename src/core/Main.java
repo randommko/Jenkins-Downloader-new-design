@@ -37,6 +37,7 @@ public class Main extends Application
     @Override
     public void start(Stage primaryStage)
     {
+        //TODO: сделать окно в стиле приложения
         try
         {
             stage = primaryStage;
