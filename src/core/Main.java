@@ -9,9 +9,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import javafx.stage.*;
 import javafx.stage.Window;
+
 import javax.imageio.ImageIO;
 
 import java.awt.*;
@@ -43,8 +43,9 @@ public class Main extends Application
         try
         {
             stage = primaryStage;
-            primaryStage.initStyle(StageStyle.TRANSPARENT);
 
+            primaryStage.initStyle(StageStyle.DECORATED);
+            //TODO: сделать кнопки закрыть/свернуть в стиле приложения
 
             root = FXMLLoader.load(getClass().getClassLoader().getResource("view/Main.fxml"));
 
@@ -98,6 +99,8 @@ public class Main extends Application
             primaryStage.getIcons().add(new Image(iconImageLoc));
 
             primaryStage.show();
+
+
         }
         catch(Exception e)
         {

@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -42,13 +43,19 @@ import static core.Main.SCENE_WIDTH;
 
 public class MainController
 {
-    private final String bgColor = "#E3F2FD";
     private final String mainColor = "#0D47A1";
-    private final String secondColor = "#E3F2FD";
-    private final String errorColor = "#D63908";
+    private final String cardBackgroundColor = "#E3F2FD";
+    private final String cardBorderColor = "#10A3E2";
+
+    private final String errorColor = "#F30707";
     private final String inProcessColor = "#10A3E2";
+    private final String successColor = "#00BD35";
+    private final String neutralColor = "#BEC4C7";
+
+    private String currentCardColor;
+
     private final String darkTextColor = "#000000";
-    private final String lightTextColor = "#CFD8DC";
+    private final String lightTextColor = "#E3E9EC";
     private final String font = "-fx-font-family: Roboto;";
 
 
@@ -63,6 +70,7 @@ public class MainController
 
     private Main main;
     public enum ClientStatus {Disconnected, Connected, Downloading, Extracting, Connecting, Updating, _lastStatus}
+    private enum MessageType {Error, Info, Success}
     private ClientStatus lastStatus, actualStatus;
     @FXML
     private AnchorPane rootPane, jobsAnchorPane;
@@ -129,7 +137,6 @@ public class MainController
                 sortJobsByTime();
                 showJobs();
 
-                showPopup("Connected");
                 setStatus(ClientStatus.Connected);
             }
             else
@@ -288,6 +295,8 @@ public class MainController
         //HEIGHT - высота
         rootPane.setMaxSize(WIDTH, HEIGHT);
         rootPane.setMinSize(WIDTH, HEIGHT);
+        rootPane.setStyle("-fx-border-color: " + mainColor + ";");
+
         jobsAnchorPane.setStyle("-fx-fill-color: #FFFFFF;");
         mainVBox.setStyle("-fx-fill-color: #FFFFFF;");
 
@@ -700,20 +709,64 @@ public class MainController
         return actualString;
     }
 
-    private void showPopup(String text)
+    private void showPopup(String text, MessageType type)
     {
+        //TODO: полноценно внедрить попап: добавить в настройки выбор отображения уведомлений в: попап/трее/нигде
+        //заменить функцию trayMessage() на showMessage() и в ней сделать выбор отображения: в трее/попапе/нигде
+        //сообщение может быть: ошибка/информировани/успех
         Main main = new Main();
         Popup popup = new Popup();
         Label popupLabel = new javafx.scene.control.Label(text);
-        popup.getContent().setAll(popupLabel);
-        popup.setAnchorLocation(PopupWindow.AnchorLocation.CONTENT_TOP_RIGHT);
-        popup.setAutoFix(false);
-        popup.setAutoHide(false);
+        popupLabel.setAlignment(Pos.CENTER);
 
-        popup.setOpacity(0);
+        popupLabel.setMinWidth(200);
+        popupLabel.setMinHeight(150);
+        popup.setOpacity(0.85);
+
+
+        popup.getContent().setAll(popupLabel);
+
+        //popup.setAnchorLocation(PopupWindow.AnchorLocation.CONTENT_TOP_RIGHT);
+        popup.setAutoFix(false);
+        popup.setAutoHide(true);
+        popup.setHideOnEscape(true);
+        popup.setX(0);
+        popup.setY(0);
+
+
+        switch (type)
+        {
+            case Success:
+                popupLabel.setStyle("-fx-background-color: " + successColor + ";" +
+                        "-fx-background-radius: 15, 15, 15, 15;" +
+                        "-fx-text-fill: " + lightTextColor + ";" +
+                        "-fx-font-size: 14px;" +
+                        "-fx-font-family: Roboto;");
+                break;
+            case Info:
+                popupLabel.setStyle("-fx-background-color: " + mainColor + ";" +
+                        "-fx-background-radius: 15, 15, 15, 15;" +
+                        "-fx-text-fill: " + lightTextColor + ";" +
+                        "-fx-font-size: 14px;" +
+                        "-fx-font-family: Roboto;");
+                break;
+            case Error:
+                popupLabel.setStyle("-fx-background-color: " + errorColor + ";" +
+                        "-fx-background-radius: 15, 15, 15, 15;" +
+                        "-fx-text-fill: " + lightTextColor + ";" +
+                        "-fx-font-size: 14px;" +
+                        "-fx-font-family: Roboto;");
+                break;
+            default:
+                break;
+        }
 
         Platform.runLater(() -> {
-            popup.show(main.getStage());
+            if (!popup.isShowing())
+                popup.show(main.getStage());
+            else
+                popup.hide();
+
             System.out.println("(MainController) (showPopup) Popup text: " + text);
         });
 

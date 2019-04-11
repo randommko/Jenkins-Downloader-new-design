@@ -52,7 +52,7 @@
             </HBox>
             <AnchorPane fx:id="jobsAnchorPane" styleClass="anchorPane" stylesheets="@../css/Main.css" VBox.vgrow="NEVER">
                <children>
-                  <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" layoutX="10.0" layoutY="35.0" styleClass="scrollPane" stylesheets="@../css/Main.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="5.0">
+                  <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" layoutX="10.0" layoutY="35.0" styleClass="scrollPane" stylesheets="@../css/Main.css" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="5.0">
                      <content>
                         <VBox fx:id="vBoxWithCards" prefHeight="744.0" spacing="10.0">
                            <children>
