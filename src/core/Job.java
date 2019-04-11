@@ -153,10 +153,11 @@ public class Job extends Pane {
         rootVBox.setAlignment(Pos.CENTER);
 
         configJobNameInfo();
-        configJobStateInfo();
+
         configJobDescription();
         configSeparators();
         configDownloadPane();
+        configJobStateInfo();
 
         rootVBox.getChildren().addAll(jobNameLabel, stateHBox, dateLabel, separator_1, descriptionText, separator_2, downloadPane);
         this.getChildren().addAll(rootVBox);
@@ -552,17 +553,21 @@ public class Job extends Pane {
                     iconJobStatus.setStyle("-fx-background-color: " + inProcessColor + ";" + roundingForStatusIcon);
                     currentCardColor = inProcessColor;
                     this.setStyle(this.getStyle() + "-fx-border-color: " + inProcessColor + ";");
+                    //TODO: добавить окно с предупждение что новый билд в процессе
+                    downloadButton.setText("Download last successful build");
                     break;
                 case Приостановлено:
                     jobStatusLabel.setText("Приостановленно");
                     iconJobStatus.setStyle("-fx-background-color: " + neutralColor + ";"  + roundingForStatusIcon);
                     currentCardColor = neutralColor;
                     this.setStyle(this.getStyle() + "-fx-border-color: " + neutralColor + ";");
+                    downloadButton.setText("Download last successful build");
                     break;
                 case Провалилось:
                     jobStatusLabel.setText("Провалилось");
                     iconJobStatus.setStyle("-fx-background-color: " + errorColor + ";"  + roundingForStatusIcon);
                     currentCardColor = errorColor;
+                    downloadButton.setText("Download last successful build");
                     this.setStyle(this.getStyle() + "-fx-border-color: " + errorColor + ";");
                     break;
                 case Неизвестно:
@@ -576,29 +581,34 @@ public class Job extends Pane {
                     iconJobStatus.setStyle("-fx-background-color: " + neutralColor + ";"  + roundingForStatusIcon);
                     currentCardColor = neutralColor;
                     this.setStyle(this.getStyle() + "-fx-border-color: " + neutralColor + ";");
+                    downloadButton.setText("Download last successful build");
                     break;
                 case Успешно:
                     jobStatusLabel.setText("Успешно");
                     iconJobStatus.setStyle("-fx-background-color: " + successColor + ";"  + roundingForStatusIcon);
                     currentCardColor = successColor;
+                    downloadButton.setText("Download");
                     this.setStyle(this.getStyle() + "-fx-border-color: " + successColor + ";");
                     break;
                 case built:
                     jobStatusLabel.setText("Not build");
                     iconJobStatus.setStyle("-fx-background-color: " + neutralColor + ";"  + roundingForStatusIcon);
                     this.setStyle(this.getStyle() + "-fx-border-color: " + neutralColor + ";");
+                    downloadButton.setText("Download last successful build");
                     break;
                 case Ошибка:
                     jobStatusLabel.setText("Ошибка");
                     iconJobStatus.setStyle("-fx-background-color: " + errorColor + ";"  + roundingForStatusIcon);
                     currentCardColor = errorColor;
                     this.setStyle(this.getStyle() + "-fx-border-color: " + errorColor + ";");
+                    downloadButton.setText("Download last successful build");
                     break;
                 default:
                     jobStatusLabel.setText("Unknown job status!");
                     iconJobStatus.setStyle("-fx-background-color: " + errorColor + ";"  + roundingForStatusIcon);
                     currentCardColor = neutralColor;
                     this.setStyle(this.getStyle() + "-fx-border-color: " + errorColor + ";");
+                    downloadButton.setText("Download last successful build");
                     break;
             }
         });

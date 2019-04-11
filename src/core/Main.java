@@ -26,6 +26,9 @@ public class Main extends Application
     private static Stage stage;
     private boolean flagFirstMinimise;
 
+    Parent root;
+    Scene scene;
+
     private static java.awt.TrayIcon trayIcon;
     private static final String iconImageLoc
            = "http://nix.mrcur.ru:8080/static/b5ec8aab/images/headshot.png";
@@ -37,9 +40,9 @@ public class Main extends Application
         try
         {
             stage = primaryStage;
-            Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("view/Main.fxml"));
+            root = FXMLLoader.load(getClass().getClassLoader().getResource("view/Main.fxml"));
 
-            Scene scene = new Scene(root, SCENE_WIDTH, SCENE_HEIGHT);
+            scene = new Scene(root, SCENE_WIDTH, SCENE_HEIGHT);
 
             primaryStage.setTitle("Jenkins downloader");
 
@@ -48,8 +51,12 @@ public class Main extends Application
             primaryStage.setMaxHeight(SCENE_HEIGHT);
             primaryStage.setMaxWidth(SCENE_WIDTH + 5);
 
+
+
             primaryStage.setMinHeight(SCENE_HEIGHT);
-            primaryStage.setMinWidth(SCENE_WIDTH - 500 + 5);
+            primaryStage.setMinWidth(SCENE_WIDTH + 5);
+
+
 
             primaryStage.setResizable(false);
 
@@ -162,10 +169,11 @@ public class Main extends Application
         return stage;
     }
 
-
     public TrayIcon getTrayIcon ()
     {
         return trayIcon;
     }
+
+
 
 }

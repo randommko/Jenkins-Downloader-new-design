@@ -2,10 +2,14 @@ package view;
 
 import core.*;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -15,9 +19,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
+import javafx.stage.*;
 import javafx.stage.Window;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -33,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 
 import static core.Main.SCENE_HEIGHT;
 import static core.Main.SCENE_WIDTH;
-import static java.lang.Thread.sleep;
+
 
 
 public class MainController
@@ -71,13 +73,13 @@ public class MainController
     @FXML
     private Label statusLabel;
     @FXML
-    private VBox vBoxWithCards;
+    private VBox vBoxWithCards, mainVBox;
     @FXML
     private Separator cardsSeparator;
     @FXML
     private HBox topBarHBox;
 
-
+//TODO: сделать всплывающее окно с сообщениями
 
     @FXML
     private void initialize() //метод в котором выполняется код при запуске приложения
@@ -112,7 +114,8 @@ public class MainController
         favoriteFlowPane.getChildren().clear();
 
         favoriteFlowPane.setPrefSize(WIDTH - 35 ,0);
-        botFlowPane.setPrefSize(WIDTH - 35, HEIGHT - 84);
+        //TODO: изменить формулу ниже
+        botFlowPane.setPrefSize(WIDTH - 35, jobsAnchorPane.getHeight() - favoriteFlowPane.getHeight());
 
         Runnable runnableGetJobList = () -> {
 
@@ -125,6 +128,7 @@ public class MainController
                 sortJobsByTime();
                 showJobs();
 
+                showPopup("Connected");
                 setStatus(ClientStatus.Connected);
             }
             else
@@ -229,37 +233,66 @@ public class MainController
         }
     }
 
+    private void setListeners() {
+        //TODO: разобраться как работает addListener
+//        allJobs.get(0).isFavorite().addListener((observable, oldValue, newValue) -> {
+//            Platform.runLater(() -> {
+//            });
+//
+//        });
+    }
+
+
     private void initWindow()
     {
-        //TODO: последние каточки уходят за видимую зону.
+
         //WIDTH - ширина
         //HEIGHT - высота
         rootPane.setMaxSize(WIDTH, HEIGHT);
         rootPane.setMinSize(WIDTH, HEIGHT);
+        jobsAnchorPane.setStyle("-fx-fill-color: #FFFFFF;");
+        mainVBox.setStyle("-fx-fill-color: #FFFFFF;");
 
-        topBarHBox.setPrefSize(WIDTH, 50);
+//        topBarHBox.setPrefSize(WIDTH, 50);
+//
+//        vBoxWithCards.setPrefSize(WIDTH, HEIGHT - topBarHBox.getHeight());
+//        //vBoxWithCards.setVgrow(scrollPane, Priority.ALWAYS);
+//
+//        jobsAnchorPane.setMinSize(WIDTH, HEIGHT - topBarHBox.getHeight());
+//        jobsAnchorPane.setMaxSize(WIDTH, HEIGHT - topBarHBox.getHeight());
+//
+//        scrollPane.setPrefSize(WIDTH - 20, jobsAnchorPane.getHeight());
+//        scrollPane.setMinSize(WIDTH - 20, jobsAnchorPane.getHeight());
+        scrollPane.setStyle("-fx-fill-color: #FFFFFF;");
 
-        vBoxWithCards.setPrefSize(WIDTH, HEIGHT - topBarHBox.getHeight());
+        //scrollPane.setVmax(jobsAnchorPane.getHeight());
+        scrollPane.viewportBoundsProperty().addListener(new ChangeListener<Bounds>() {
+            @Override
+            public void changed(ObservableValue<? extends Bounds> ov, Bounds oldBounds, Bounds bounds) {
+                botFlowPane.setPrefWidth(bounds.getWidth());
+                botFlowPane.setPrefHeight(bounds.getHeight());
+            }
+        });
 
-        jobsAnchorPane.setMinSize(WIDTH, HEIGHT - topBarHBox.getHeight());
-        jobsAnchorPane.setMaxSize(WIDTH, HEIGHT - topBarHBox.getHeight());
-
-        scrollPane.setMinSize(WIDTH - 20, HEIGHT - 84);
-        scrollPane.setStyle("-fx-background-color: #FFFFFF;");
 
         favoriteFlowPane.setStyle("-fx-background-color: #FFFFFF;");
         favoriteFlowPane.setOrientation(Orientation.HORIZONTAL);
         favoriteFlowPane.setHgap(10);
         favoriteFlowPane.setVgap(10);
-        favoriteFlowPane.setPrefSize(WIDTH - 35 ,0);
+        //favoriteFlowPane.setPrefSize(WIDTH - 35 ,0);
 
-        cardsSeparator.setPrefSize(WIDTH - 20 ,1);
+        //TODO: сделать разделитель синего цвета
+        cardsSeparator.setPrefSize(WIDTH - 42 ,1);
+        cardsSeparator.setStyle("-fx-border: 1, 0, 0, 0; " +
+                "-fx-border-color: " + mainColor + ";" +
+                "-fx-fill-color: " + mainColor + ";");
 
-        botFlowPane.setPrefSize(WIDTH - 35, HEIGHT - 84);
+        botFlowPane.setPrefSize(WIDTH - 35, jobsAnchorPane.getHeight() - favoriteFlowPane.getHeight());
         botFlowPane.setStyle("-fx-background-color: #FFFFFF;");
         botFlowPane.setOrientation(Orientation.HORIZONTAL);
         botFlowPane.setHgap(10);
         botFlowPane.setVgap(10);
+        botFlowPane.setMaxSize(WIDTH - 35, jobsAnchorPane.getHeight() - favoriteFlowPane.getHeight());
 
 
         rootPane.getStylesheets().add(this.getClass().getResource("../css/Main.css").toExternalForm());
@@ -315,12 +348,6 @@ public class MainController
                     {
                         Job job = (Job)favoriteJobIterator.next();
                         favoriteFlowPane.getChildren().add(job);
-                        if (favoriteFlowPane.getChildren().size() %  (int)(favoriteFlowPane.getWidth() / job.getCardWidth()) == 0) {
-                            favoriteFlowPane.setPrefSize(WIDTH - 35, favoriteFlowPane.getHeight() + job.getCardHeight());
-                            botFlowPane.setPrefSize(WIDTH - 35, jobsAnchorPane.getHeight() - favoriteFlowPane.getHeight());
-                        }
-
-
                     }
                 }
         );
@@ -337,6 +364,7 @@ public class MainController
                     }
                 }
         );
+
     }
 
     private void sortJobsByTime()
@@ -649,5 +677,25 @@ public class MainController
             actualString = actualString + "\"" + job.getVisibleName() + " (#" + job.getJobID() + ")\" changed status to: \"" + job.getJobStatus() + "\"\n";
 
         return actualString;
+    }
+
+    private void showPopup(String text)
+    {
+        Main main = new Main();
+        Popup popup = new Popup();
+        Label popupLabel = new javafx.scene.control.Label(text);
+        popup.getContent().setAll(popupLabel);
+        popup.setAnchorLocation(PopupWindow.AnchorLocation.CONTENT_TOP_RIGHT);
+        popup.setAutoFix(false);
+        popup.setAutoHide(false);
+
+        popup.setOpacity(0);
+
+        Platform.runLater(() -> {
+            popup.show(main.getStage());
+            System.out.println("(MainController) (showPopup) Popup text: " + text);
+        });
+
+
     }
 }
