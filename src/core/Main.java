@@ -20,7 +20,7 @@ import java.net.URL;
 import java.util.Timer;
 
 
-
+//TODO: настроить сборку артефактов
 public class Main extends Application
 {
     public static final int SCENE_WIDTH = 810;

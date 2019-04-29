@@ -293,6 +293,9 @@ public class MainController
     {
         //WIDTH - ширина
         //HEIGHT - высота
+        //botFlowPane = new FlowPane();
+        //favoriteFlowPane = new FlowPane();
+
         rootPane.setMaxSize(WIDTH, HEIGHT);
         rootPane.setMinSize(WIDTH, HEIGHT);
         rootPane.setStyle("-fx-border-color: " + mainColor + ";");
@@ -362,7 +365,7 @@ public class MainController
         return updateStatus;
     }
 
-    private void showJobs()
+    public void showJobs()
     {
         Platform.runLater(
                 () -> {

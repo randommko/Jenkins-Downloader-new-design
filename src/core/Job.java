@@ -15,6 +15,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
+import view.MainController;
 
 import java.awt.*;
 import java.io.File;
@@ -265,6 +266,7 @@ public class Job extends Pane {
             {
                 favoriteIconButton.setGraphic(new ImageView(unfavoriteIconImage));
             }
+            //MainController.showJobs();
         });
     }
 
@@ -551,7 +553,7 @@ public class Job extends Pane {
                     iconJobStatus.setStyle("-fx-background-color: " + inProcessColor + ";" + roundingForStatusIcon);
                     currentCardColor = inProcessColor;
                     this.setStyle(this.getStyle() + "-fx-border-color: " + inProcessColor + ";");
-                    //TODO: добавить окно с предупждение что новый билд в процессе
+                    //TODO: добавить окно с предупждение что новый билд в процессе (будущая функция showMessage())
                     downloadButton.setText("Download last successful build");
                     break;
                 case Приостановлено:
